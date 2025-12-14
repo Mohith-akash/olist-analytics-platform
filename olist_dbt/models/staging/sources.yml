@@ -14,3 +14,4 @@ sources:
       - name: sellers
       - name: geolocation
       - name: order_reviews
+      - name: category_translation
