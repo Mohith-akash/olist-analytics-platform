@@ -1,6 +1,6 @@
 """
-🛒 Olist E-commerce Analytics Dashboard
-Premium Design with Animations & Effects
+Olist Analytics Dashboard
+Streamlit app for e-commerce data visualization
 """
 
 import streamlit as st
@@ -17,7 +17,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Premium CSS with animations
+# Custom CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
