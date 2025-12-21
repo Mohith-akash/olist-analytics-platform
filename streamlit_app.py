@@ -1,6 +1,6 @@
 """
 🛒 Olist E-commerce Analytics Dashboard
-Single page with horizontal tab navigation
+Premium Design with Animations & Effects
 """
 
 import streamlit as st
@@ -17,139 +17,335 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS with horizontal tab nav
+# Premium CSS with animations
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
     :root {
-        --bg: #0f0f12;
-        --card: #1a1a1f;
-        --border: #2a2a30;
+        --bg-dark: #0a0a0f;
+        --bg-card: #12121a;
+        --bg-card-hover: #1a1a25;
+        --border: #1f1f2e;
         --text: #ffffff;
-        --text-dim: #9898a0;
+        --text-dim: #8888a0;
         --purple: #a855f7;
         --pink: #ec4899;
-        --green: #22c55e;
+        --blue: #3b82f6;
+        --cyan: #06b6d4;
+        --green: #10b981;
+        --orange: #f97316;
+        --glow-purple: rgba(168, 85, 247, 0.4);
     }
     
     * { font-family: 'Inter', sans-serif; }
-    .stApp { background: var(--bg); }
-    #MainMenu, footer, header { visibility: hidden; }
-    .block-container { padding: 0.5rem 2rem 2rem 2rem; max-width: 100%; }
     
-    /* Hide default sidebar */
-    section[data-testid="stSidebar"] { display: none; }
-    
-    /* Top Nav Bar */
-    .top-nav {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 0.5rem;
-        margin-bottom: 1.5rem;
-        display: flex;
-        gap: 0.5rem;
+    .stApp { 
+        background: linear-gradient(135deg, #0a0a0f 0%, #0d0d15 50%, #0a0a12 100%);
     }
     
-    /* Style the Streamlit tabs to look like nav */
+    #MainMenu, footer, header { visibility: hidden; }
+    section[data-testid="stSidebar"] { display: none; }
+    .block-container { padding: 0.5rem 2rem 2rem 2rem; max-width: 100%; }
+    
+    /* Animated Background Particles */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 60%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    /* Premium Tab Styling */
     .stTabs [data-baseweb="tab-list"] {
-        background: var(--card);
-        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(18, 18, 26, 0.9) 0%, rgba(20, 20, 30, 0.9) 100%);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
         padding: 0.5rem;
         gap: 0.5rem;
-        border: 1px solid var(--border);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
-        border-radius: 8px;
-        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        padding: 0.8rem 1.5rem;
         color: var(--text-dim);
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
         border: none;
+        transition: all 0.3s ease;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        background: rgba(168, 85, 247, 0.1);
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
         color: var(--purple);
+        transform: translateY(-2px);
     }
     
     .stTabs [aria-selected="true"] {
-        background: var(--purple) !important;
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%) !important;
         color: white !important;
+        box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
     }
     
-    .stTabs [data-baseweb="tab-border"] { display: none; }
-    .stTabs [data-baseweb="tab-highlight"] { display: none; }
+    .stTabs [data-baseweb="tab-border"], .stTabs [data-baseweb="tab-highlight"] { display: none; }
     
-    /* KPI Cards */
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .kpi-card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1.25rem;
-        text-align: center;
-        transition: all 0.2s;
+    /* Hero Header */
+    .hero-header {
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+        padding: 2rem 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);
     }
-    .kpi-card:hover { border-color: var(--purple); transform: translateY(-2px); }
-    .kpi-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .kpi-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
-    .kpi-value { font-size: 1.4rem; font-weight: 700; color: var(--text); margin: 0.25rem 0; }
-    .kpi-desc { font-size: 0.7rem; color: var(--green); }
     
-    /* Section */
-    .section-title {
+    .hero-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+        animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) rotate(45deg); }
+    }
+    
+    .hero-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-header p {
+        color: rgba(255,255,255,0.9);
+        margin: 0.5rem 0 0 0;
         font-size: 1rem;
-        font-weight: 600;
-        color: var(--text);
-        margin: 1.5rem 0 1rem 0;
-        padding-left: 0.75rem;
-        border-left: 4px solid var(--purple);
+        font-weight: 400;
+        position: relative;
+        z-index: 1;
     }
     
-    /* Chart Card */
-    .chart-card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-    .chart-header { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-    .chart-desc { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
-    
-    /* Skills */
-    .skill-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.5rem 0; }
-    .skill-tag {
-        background: rgba(168, 85, 247, 0.15);
-        border: 1px solid var(--purple);
-        padding: 0.3rem 0.6rem;
-        border-radius: 999px;
-        font-size: 0.7rem;
-        color: var(--purple);
+    /* Glowing KPI Cards */
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
     }
     
-    /* Footer */
-    .footer-box {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 12px;
+    .kpi-card {
+        background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(25, 25, 35, 0.8) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        border-radius: 16px;
         padding: 1.5rem;
         text-align: center;
-        margin-top: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
     }
+    
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #a855f7, #ec4899, #f97316);
+    }
+    
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(168, 85, 247, 0.5);
+        box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2), 0 0 20px rgba(168, 85, 247, 0.1);
+    }
+    
+    .kpi-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
+    }
+    
+    .kpi-label {
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+    
+    .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0.5rem 0;
+    }
+    
+    .kpi-desc {
+        font-size: 0.7rem;
+        color: var(--green);
+        font-weight: 500;
+    }
+    
+    /* Section Titles */
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 2rem 0 1rem 0;
+        padding-left: 1rem;
+        border-left: 4px solid;
+        border-image: linear-gradient(180deg, #a855f7, #ec4899) 1;
+        text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    }
+    
+    /* Premium Chart Cards */
+    .chart-card {
+        background: linear-gradient(135deg, rgba(18, 18, 26, 0.9) 0%, rgba(22, 22, 32, 0.9) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(168, 85, 247, 0.15);
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        border-color: rgba(168, 85, 247, 0.4);
+        box-shadow: 0 5px 20px rgba(168, 85, 247, 0.15);
+    }
+    
+    .chart-header {
+        font-size: 1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .chart-desc {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-top: 0.25rem;
+    }
+    
+    /* Skills Section */
+    .skill-card {
+        background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(25, 25, 35, 0.8) 100%);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        height: 100%;
+    }
+    
+    .skill-card h4 {
+        color: var(--purple);
+        margin-bottom: 1rem;
+    }
+    
+    .skill-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin: 0.75rem 0;
+    }
+    
+    .skill-tag {
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        color: #c4b5fd;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .skill-tag:hover {
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(236, 72, 153, 0.4) 100%);
+        transform: scale(1.05);
+    }
+    
+    /* Premium Footer */
+    .footer-box {
+        background: linear-gradient(135deg, rgba(18, 18, 26, 0.9) 0%, rgba(22, 22, 32, 0.9) 100%);
+        border: 1px solid rgba(168, 85, 247, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        margin-top: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .footer-box::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #a855f7, #ec4899, #f97316);
+    }
+    
     .github-btn {
         display: inline-block;
-        background: var(--purple);
-        padding: 0.5rem 1.5rem;
-        border-radius: 8px;
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
         color: white;
         text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 500;
+        font-size: 0.9rem;
+        font-weight: 600;
         margin-top: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+    }
+    
+    .github-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
+    }
+    
+    /* Data Tables */
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    /* Metrics styling */
+    [data-testid="stMetricValue"] {
+        background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -206,8 +402,12 @@ tab_home, tab_engineering, tab_analytics, tab_query = st.tabs([
 # TAB 1: HOME
 # ============================================
 with tab_home:
-    st.markdown("## 🛒 Olist E-commerce Analytics Platform")
-    st.markdown("*End-to-end data pipeline: CSV → MotherDuck → dbt → Dashboard*")
+    st.markdown("""
+    <div class="hero-header">
+        <h1>🛒 Olist E-commerce Analytics Platform</h1>
+        <p>End-to-end data pipeline • CSV → MotherDuck → dbt → Interactive Dashboard</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # KPIs
     total_rev = fct_orders['total_order_value'].sum()
@@ -221,37 +421,37 @@ with tab_home:
             <div class="kpi-icon">💰</div>
             <div class="kpi-label">Total Revenue</div>
             <div class="kpi-value">{fmt_curr(total_rev)}</div>
-            <div class="kpi-desc">Sum of all orders</div>
+            <div class="kpi-desc">✨ Sum of all orders</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-icon">📦</div>
             <div class="kpi-label">Total Orders</div>
             <div class="kpi-value">{fmt_num(total_ord)}</div>
-            <div class="kpi-desc">Unique orders</div>
+            <div class="kpi-desc">✨ Unique orders</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-icon">👥</div>
             <div class="kpi-label">Customers</div>
             <div class="kpi-value">{fmt_num(total_cust)}</div>
-            <div class="kpi-desc">Unique buyers</div>
+            <div class="kpi-desc">✨ Unique buyers</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-icon">🛍️</div>
             <div class="kpi-label">Avg Order Value</div>
             <div class="kpi-value">{fmt_curr(avg_order)}</div>
-            <div class="kpi-desc">Revenue ÷ Orders</div>
+            <div class="kpi-desc">✨ Revenue ÷ Orders</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Quick Charts
+    # Charts
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div class="chart-card">
-            <div class="chart-header">Monthly Revenue</div>
-            <div class="chart-desc">X: Month | Y: Revenue (R$)</div>
+            <div class="chart-header">📈 Monthly Revenue Trend</div>
+            <div class="chart-desc">Tracking revenue growth over time</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -259,51 +459,110 @@ with tab_home:
         monthly['month'] = monthly['order_purchase_timestamp'].dt.to_period('M').astype(str)
         m_agg = monthly.groupby('month')['total_order_value'].sum().reset_index()
         
-        fig = go.Figure(go.Bar(x=m_agg['month'], y=m_agg['total_order_value'], marker_color='#a855f7'))
-        fig.update_layout(height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-            xaxis=dict(tickfont=dict(color='#9898a0', size=9)),
-            yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0', size=9)),
-            margin=dict(t=10, b=40, l=50, r=10))
+        fig = go.Figure(go.Bar(
+            x=m_agg['month'], y=m_agg['total_order_value'],
+            marker=dict(
+                color=m_agg['total_order_value'],
+                colorscale=[[0, '#6366f1'], [0.5, '#a855f7'], [1, '#ec4899']]
+            )
+        ))
+        fig.update_layout(
+            height=300, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            xaxis=dict(tickfont=dict(color='#888', size=9), gridcolor='rgba(255,255,255,0.05)'),
+            yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=9)),
+            margin=dict(t=10, b=40, l=50, r=10)
+        )
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     with col2:
         st.markdown("""
         <div class="chart-card">
-            <div class="chart-header">Top 5 Categories</div>
-            <div class="chart-desc">X: Revenue (R$) | Y: Category</div>
+            <div class="chart-header">🏆 Top 5 Categories</div>
+            <div class="chart-desc">Highest revenue product categories</div>
         </div>
         """, unsafe_allow_html=True)
         
         cat_data = fct_orders.groupby('product_category_name')['total_order_value'].sum().nlargest(5).reset_index()
         cat_data = cat_data.sort_values('total_order_value')
         
-        fig = go.Figure(go.Bar(x=cat_data['total_order_value'], y=cat_data['product_category_name'],
-            orientation='h', marker_color=['#6366f1', '#8b5cf6', '#a855f7', '#c084fc', '#ec4899']))
-        fig.update_layout(height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-            xaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0', size=9)),
+        fig = go.Figure(go.Bar(
+            x=cat_data['total_order_value'], y=cat_data['product_category_name'],
+            orientation='h',
+            marker=dict(
+                color=['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899']
+            ),
+            text=[fmt_curr(x) for x in cat_data['total_order_value']],
+            textposition='outside',
+            textfont=dict(color='#c4b5fd', size=10)
+        ))
+        fig.update_layout(
+            height=300, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            xaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=9)),
             yaxis=dict(tickfont=dict(color='#fff', size=9)),
-            margin=dict(t=10, b=40, l=10, r=10))
+            margin=dict(t=10, b=40, l=10, r=80)
+        )
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
-    # Skills
+    # Skills Section
     st.markdown('<div class="section-title">🎯 Skills Demonstrated</div>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("#### 🔧 Data Engineering")
-        st.markdown("- dbt dimensional modeling\n- SQL transformations\n- Data quality testing")
-    with col2:
-        st.markdown("#### 📊 Analytics")
-        st.markdown("- KPI calculations\n- Time-series analysis\n- Customer segmentation")
-    with col3:
-        st.markdown("#### 💻 Tech Stack")
-        st.markdown("- MotherDuck (DuckDB)\n- dbt Core\n- Python / Streamlit")
     
+    with col1:
+        st.markdown("""
+        <div class="skill-card">
+            <h4>🔧 Data Engineering</h4>
+            <div class="skill-tags">
+                <span class="skill-tag">dbt</span>
+                <span class="skill-tag">SQL</span>
+                <span class="skill-tag">ETL</span>
+                <span class="skill-tag">Data Modeling</span>
+            </div>
+            <p style="color: #888; font-size: 0.85rem; margin-top: 1rem;">
+                Kimball dimensional modeling with staging and mart layers
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="skill-card">
+            <h4>📊 Analytics</h4>
+            <div class="skill-tags">
+                <span class="skill-tag">KPIs</span>
+                <span class="skill-tag">Time Series</span>
+                <span class="skill-tag">Segmentation</span>
+            </div>
+            <p style="color: #888; font-size: 0.85rem; margin-top: 1rem;">
+                Business metrics, customer LTV, and seller performance
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="skill-card">
+            <h4>💻 Tech Stack</h4>
+            <div class="skill-tags">
+                <span class="skill-tag">MotherDuck</span>
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">Streamlit</span>
+                <span class="skill-tag">Plotly</span>
+            </div>
+            <p style="color: #888; font-size: 0.85rem; margin-top: 1rem;">
+                Modern cloud data warehouse with interactive visualization
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Footer
     st.markdown("""
     <div class="footer-box">
-        <h3 style="color: white; margin: 0;">Olist E-commerce Analytics Platform</h3>
-        <p style="color: #9898a0; margin: 0.5rem 0;">Built to demonstrate data engineering skills</p>
-        <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="github-btn">📂 View Source Code</a>
+        <h3 style="color: white; margin: 0; font-size: 1.25rem;">Olist E-commerce Analytics Platform</h3>
+        <p style="color: #888; margin: 0.75rem 0;">Built to demonstrate data engineering skills • Brazilian marketplace dataset</p>
+        <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="github-btn">
+            📂 View Source Code on GitHub
+        </a>
     </div>
     """, unsafe_allow_html=True)
 
@@ -312,8 +571,12 @@ with tab_home:
 # TAB 2: DATA ENGINEERING
 # ============================================
 with tab_engineering:
-    st.markdown("## 🔧 Data Engineering")
-    st.markdown("*SQL transformations, dbt models, and data architecture*")
+    st.markdown("""
+    <div class="hero-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);">
+        <h1>🔧 Data Engineering</h1>
+        <p>SQL transformations, dbt models, and dimensional modeling</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     eng_tab1, eng_tab2, eng_tab3 = st.tabs(["📐 Architecture", "📝 fct_orders.sql", "📝 dim_customers.sql"])
     
@@ -321,34 +584,63 @@ with tab_engineering:
         st.markdown('<div class="section-title">📐 Data Model Architecture</div>', unsafe_allow_html=True)
         
         st.markdown("""
-        This project uses **Kimball dimensional modeling** with a 3-layer dbt architecture:
+        <div class="chart-card">
+        <p>This project uses <strong>Kimball dimensional modeling</strong> with a 3-layer dbt architecture:</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        | Layer | Description | Models |
-        |-------|-------------|--------|
-        | **Sources** | Raw CSV data | 9 source tables |
-        | **Staging** | Cleaned & typed | `stg_orders`, `stg_customers`, etc. |
-        | **Marts** | Business-ready | `fct_orders`, `dim_customers`, `dim_sellers` |
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown("""
+            <div class="skill-card">
+                <h4>📥 Sources</h4>
+                <p style="color: #888;">Raw CSV data from Olist</p>
+                <div class="skill-tags">
+                    <span class="skill-tag">9 tables</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown("""
+            <div class="skill-card">
+                <h4>🔄 Staging</h4>
+                <p style="color: #888;">Cleaned & typed data</p>
+                <div class="skill-tags">
+                    <span class="skill-tag">stg_orders</span>
+                    <span class="skill-tag">stg_customers</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col3:
+            st.markdown("""
+            <div class="skill-card">
+                <h4>📊 Marts</h4>
+                <p style="color: #888;">Business-ready analytics</p>
+                <div class="skill-tags">
+                    <span class="skill-tag">fct_orders</span>
+                    <span class="skill-tag">dim_customers</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
         
-        ### Key Design Decisions
-        - **Fact Table**: One row per order line item
-        - **Dimensions**: Customer, Product, Seller with calculated metrics
-        - **Tests**: `not_null`, `unique`, `accepted_values`
-        """)
-        
-        st.markdown("### Skills Demonstrated")
+        st.markdown("### 🛠️ SQL Skills Demonstrated")
         st.markdown("""
         <div class="skill-tags">
             <span class="skill-tag">CTEs</span>
-            <span class="skill-tag">JOINs</span>
+            <span class="skill-tag">LEFT JOINs</span>
             <span class="skill-tag">Aggregations</span>
             <span class="skill-tag">CASE statements</span>
             <span class="skill-tag">Window functions</span>
+            <span class="skill-tag">COALESCE</span>
             <span class="skill-tag">dbt ref()</span>
+            <span class="skill-tag">Materializations</span>
         </div>
         """, unsafe_allow_html=True)
     
     with eng_tab2:
-        st.markdown('<div class="section-title">📝 fct_orders.sql</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">📝 fct_orders.sql - Fact Table</div>', unsafe_allow_html=True)
+        st.markdown("*Multi-table JOIN with calculated `total_order_value`*")
+        
         st.code('''-- fct_orders.sql (dbt model)
 with orders as (
     select * from {{ ref('stg_orders') }}
@@ -380,7 +672,9 @@ final as (
 select * from final''', language='sql')
     
     with eng_tab3:
-        st.markdown('<div class="section-title">📝 dim_customers.sql</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">📝 dim_customers.sql - Customer Dimension</div>', unsafe_allow_html=True)
+        st.markdown("*LTV calculation, aggregations, and CASE-based segmentation*")
+        
         st.code('''-- dim_customers.sql (dbt model)
 {{ config(materialized='table') }}
 
@@ -421,21 +715,25 @@ select * from final''', language='sql')
 # TAB 3: ANALYTICS
 # ============================================
 with tab_analytics:
-    st.markdown("## 📊 Analytics Dashboard")
-    st.markdown("*Interactive charts with filters*")
+    st.markdown("""
+    <div class="hero-header" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #3b82f6 100%);">
+        <h1>📊 Analytics Dashboard</h1>
+        <p>Interactive charts with filters for deep analysis</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Filters
+    # Filter
     col1, col2 = st.columns([1, 3])
     with col1:
         cats = ['All Categories'] + sorted(fct_orders['product_category_name'].dropna().unique().tolist())
-        sel_cat = st.selectbox("Filter by Category", cats)
+        sel_cat = st.selectbox("🏷️ Filter Category", cats)
     
     df = fct_orders.copy()
     if sel_cat != 'All Categories':
         df = df[df['product_category_name'] == sel_cat]
     
-    # Charts
-    st.markdown('<div class="section-title">📈 Revenue Over Time</div>', unsafe_allow_html=True)
+    # Revenue Chart
+    st.markdown('<div class="section-title">📈 Revenue & Orders Over Time</div>', unsafe_allow_html=True)
     
     monthly = df.copy()
     monthly['month'] = monthly['order_purchase_timestamp'].dt.to_period('M').astype(str)
@@ -443,15 +741,23 @@ with tab_analytics:
     m_agg.columns = ['Month', 'Revenue', 'Orders']
     
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    fig.add_trace(go.Bar(x=m_agg['Month'], y=m_agg['Revenue'], name='Revenue', marker_color='#a855f7'), secondary_y=False)
-    fig.add_trace(go.Scatter(x=m_agg['Month'], y=m_agg['Orders'], name='Orders', line=dict(color='#22c55e', width=3)), secondary_y=True)
+    fig.add_trace(go.Bar(
+        x=m_agg['Month'], y=m_agg['Revenue'], name='Revenue',
+        marker=dict(color=m_agg['Revenue'], colorscale=[[0, '#6366f1'], [0.5, '#a855f7'], [1, '#ec4899']])
+    ), secondary_y=False)
+    fig.add_trace(go.Scatter(
+        x=m_agg['Month'], y=m_agg['Orders'], name='Orders',
+        line=dict(color='#22c55e', width=3), mode='lines+markers'
+    ), secondary_y=True)
     
-    fig.update_layout(height=350, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(tickfont=dict(color='#9898a0')),
-        yaxis=dict(title='Revenue (R$)', gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0')),
-        yaxis2=dict(title='Orders', tickfont=dict(color='#9898a0')),
+    fig.update_layout(
+        height=350, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(tickfont=dict(color='#888'), gridcolor='rgba(255,255,255,0.05)'),
+        yaxis=dict(title='Revenue (R$)', gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
+        yaxis2=dict(title='Orders', tickfont=dict(color='#888')),
         legend=dict(orientation='h', y=1.1, font=dict(color='#fff')),
-        margin=dict(t=40, b=60))
+        margin=dict(t=40, b=60)
+    )
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     # Two charts
@@ -461,26 +767,30 @@ with tab_analytics:
         st.markdown('<div class="section-title">📍 Customers by State</div>', unsafe_allow_html=True)
         state_data = dim_customers.groupby('state').size().nlargest(10).reset_index(name='Count')
         
-        fig = go.Figure(go.Bar(x=state_data['state'], y=state_data['Count'],
-            marker=dict(color=state_data['Count'], colorscale=[[0, '#a855f7'], [1, '#ec4899']])))
+        fig = go.Figure(go.Bar(
+            x=state_data['state'], y=state_data['Count'],
+            marker=dict(color=state_data['Count'], colorscale=[[0, '#6366f1'], [1, '#ec4899']])
+        ))
         fig.update_layout(height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(tickfont=dict(color='#fff')),
-            yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0')),
+            yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
             margin=dict(t=10, b=40))
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
     
     with col2:
-        st.markdown('<div class="section-title">⭐ Seller Tiers</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-title">⭐ Seller Performance Tiers</div>', unsafe_allow_html=True)
         tier_data = dim_sellers.groupby('seller_tier').size().reset_index(name='Count')
         tier_order = ['Platinum', 'Gold', 'Silver', 'Bronze']
         tier_data['seller_tier'] = pd.Categorical(tier_data['seller_tier'], categories=tier_order, ordered=True)
         tier_data = tier_data.sort_values('seller_tier')
         
-        fig = go.Figure(go.Bar(x=tier_data['seller_tier'], y=tier_data['Count'],
-            marker_color=['#e5e4e2', '#fbbf24', '#71717a', '#d97706']))
+        fig = go.Figure(go.Bar(
+            x=tier_data['seller_tier'], y=tier_data['Count'],
+            marker_color=['#e5e4e2', '#fbbf24', '#71717a', '#d97706']
+        ))
         fig.update_layout(height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(tickfont=dict(color='#fff')),
-            yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0')),
+            yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
             margin=dict(t=10, b=40), bargap=0.4)
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
@@ -489,8 +799,12 @@ with tab_analytics:
 # TAB 4: QUERY DATA
 # ============================================
 with tab_query:
-    st.markdown("## 🔍 Query Data")
-    st.markdown("*Select filters and download as CSV*")
+    st.markdown("""
+    <div class="hero-header" style="background: linear-gradient(135deg, #f97316 0%, #f59e0b 50%, #eab308 100%);">
+        <h1>🔍 Query Data</h1>
+        <p>Filter specific data and download as CSV</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     query_tab1, query_tab2, query_tab3 = st.tabs(["📅 Orders", "🏷️ Products", "👥 Customers"])
     
@@ -502,7 +816,7 @@ with tab_query:
         sel_month = st.selectbox("Select Month", months, index=len(months)-1)
         
         month_data = fct_orders[fct_orders['month'] == sel_month][
-            ['order_id', 'customer_id', 'product_category_name', 'price', 'freight_value', 'total_order_value']
+            ['order_id', 'customer_id', 'product_category_name', 'price', 'total_order_value']
         ].copy()
         
         col1, col2, col3 = st.columns(3)
@@ -533,7 +847,7 @@ with tab_query:
         st.dataframe(cat_data.sort_values('total_revenue', ascending=False), use_container_width=True, hide_index=True)
         
         csv = cat_data.to_csv(index=False)
-        st.download_button(f"📥 Download {len(cat_data):,} products", csv, f"products.csv", "text/csv")
+        st.download_button(f"📥 Download {len(cat_data):,} products", csv, "products.csv", "text/csv")
     
     with query_tab3:
         st.markdown('<div class="section-title">👥 Customers by State</div>', unsafe_allow_html=True)
