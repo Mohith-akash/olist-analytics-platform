@@ -28,8 +28,11 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 
 ## 📊 Dashboards
 
+
 ### Streamlit Web Dashboard
 Interactive web dashboard with KPIs, gauge charts, and data exploration.
+
+![Streamlit Dashboard](streamlit_dashboard.png)
 
 **Features:**
 - 6 KPI cards with key metrics
