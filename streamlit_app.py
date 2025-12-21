@@ -30,7 +30,7 @@ st.markdown("""
         --text: #ffffff;
         --text-dim: #8888a0;
         --purple: #a855f7;
-        --pink: #ec4899;
+        --pink: #8b5cf6;
         --blue: #3b82f6;
         --cyan: #06b6d4;
         --green: #10b981;
@@ -94,7 +94,7 @@ st.markdown("""
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%) !important;
+        background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%) !important;
         color: white !important;
         box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
     }
@@ -103,7 +103,7 @@ st.markdown("""
     
     /* Hero Header */
     .hero-header {
-        background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+        background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #f97316 100%);
         padding: 2rem 2.5rem;
         border-radius: 20px;
         margin-bottom: 2rem;
@@ -174,7 +174,7 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #a855f7, #ec4899, #f97316);
+        background: linear-gradient(90deg, #a855f7, #8b5cf6, #f97316);
     }
     
     .kpi-card:hover {
@@ -221,7 +221,7 @@ st.markdown("""
         margin: 2rem 0 1rem 0;
         padding-left: 1rem;
         border-left: 4px solid;
-        border-image: linear-gradient(180deg, #a855f7, #ec4899) 1;
+        border-image: linear-gradient(180deg, #a855f7, #8b5cf6) 1;
         text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
     }
     
@@ -312,12 +312,12 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #a855f7, #ec4899, #f97316);
+        background: linear-gradient(90deg, #a855f7, #8b5cf6, #f97316);
     }
     
     .github-btn {
         display: inline-block;
-        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+        background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
         padding: 0.75rem 2rem;
         border-radius: 12px;
         color: white;
@@ -463,7 +463,7 @@ with tab_home:
             x=m_agg['month'], y=m_agg['total_order_value'],
             marker=dict(
                 color=m_agg['total_order_value'],
-                colorscale=[[0, '#6366f1'], [0.5, '#a855f7'], [1, '#ec4899']]
+                colorscale=[[0, '#6366f1'], [0.5, '#a855f7'], [1, '#8b5cf6']]
             )
         ))
         fig.update_layout(
@@ -489,7 +489,7 @@ with tab_home:
             x=cat_data['total_order_value'], y=cat_data['product_category_name'],
             orientation='h',
             marker=dict(
-                color=['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899']
+                color=['#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#8b5cf6']
             ),
             text=[fmt_curr(x) for x in cat_data['total_order_value']],
             textposition='outside',
@@ -743,7 +743,7 @@ with tab_analytics:
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Bar(
         x=m_agg['Month'], y=m_agg['Revenue'], name='Revenue',
-        marker=dict(color=m_agg['Revenue'], colorscale=[[0, '#6366f1'], [0.5, '#a855f7'], [1, '#ec4899']])
+        marker=dict(color=m_agg['Revenue'], colorscale=[[0, '#6366f1'], [0.5, '#a855f7'], [1, '#8b5cf6']])
     ), secondary_y=False)
     fig.add_trace(go.Scatter(
         x=m_agg['Month'], y=m_agg['Orders'], name='Orders',
@@ -769,7 +769,7 @@ with tab_analytics:
         
         fig = go.Figure(go.Bar(
             x=state_data['state'], y=state_data['Count'],
-            marker=dict(color=state_data['Count'], colorscale=[[0, '#6366f1'], [1, '#ec4899']])
+            marker=dict(color=state_data['Count'], colorscale=[[0, '#6366f1'], [1, '#8b5cf6']])
         ))
         fig.update_layout(height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             xaxis=dict(tickfont=dict(color='#fff')),
