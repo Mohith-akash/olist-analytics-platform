@@ -1,13 +1,12 @@
 """
-🛒 Olist Analytics - Home
-Overview with KPIs and key metrics
+🏠 Olist Analytics - Home
+Portfolio piece for Data/Analytics Engineering roles
 """
 
 import streamlit as st
 import duckdb
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import os
 
 st.set_page_config(
@@ -17,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Theme CSS
+# Shared CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -36,62 +35,103 @@ st.markdown("""
     * { font-family: 'Inter', sans-serif; }
     .stApp { background: var(--bg); }
     #MainMenu, footer, header { visibility: hidden; }
-    .block-container { padding: 1.5rem 2rem; max-width: 100%; }
+    .block-container { padding: 1rem 2rem; max-width: 100%; }
     
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a1a24 0%, #0f0f14 100%);
+    }
+    section[data-testid="stSidebar"] > div { padding-top: 1rem; }
+    
+    .sidebar-brand {
+        text-align: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1rem;
+    }
+    .sidebar-brand h2 { color: var(--text); font-size: 1.25rem; margin: 0; }
+    .sidebar-brand p { color: var(--text-dim); font-size: 0.75rem; margin: 0.25rem 0 0 0; }
+    
+    /* Header */
     .header-box {
         background: linear-gradient(135deg, var(--purple), var(--pink));
         padding: 1.5rem 2rem;
         border-radius: 16px;
         margin-bottom: 1.5rem;
     }
-    .header-box h1 { font-size: 1.75rem; font-weight: 700; color: white; margin: 0; }
-    .header-box p { color: rgba(255,255,255,0.9); margin: 0.25rem 0 0 0; font-size: 0.95rem; }
+    .header-box h1 { font-size: 1.5rem; font-weight: 700; color: white; margin: 0; }
+    .header-box p { color: rgba(255,255,255,0.9); margin: 0.25rem 0 0 0; font-size: 0.9rem; }
     
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    /* KPI Cards */
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
     .kpi-card {
         background: var(--card);
         border: 1px solid var(--border);
         border-radius: 12px;
         padding: 1.25rem;
         text-align: center;
+        transition: all 0.2s;
     }
-    .kpi-card:hover { border-color: var(--purple); transform: translateY(-2px); transition: all 0.2s; }
+    .kpi-card:hover { border-color: var(--purple); transform: translateY(-2px); }
     .kpi-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .kpi-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-    .kpi-value { font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 0.25rem 0; }
+    .kpi-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; }
+    .kpi-value { font-size: 1.4rem; font-weight: 700; color: var(--text); margin: 0.25rem 0; }
     .kpi-desc { font-size: 0.7rem; color: var(--green); }
     
+    /* Section */
     .section-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 600;
         color: var(--text);
-        margin: 2rem 0 1rem 0;
+        margin: 1.5rem 0 1rem 0;
         padding-left: 0.75rem;
         border-left: 4px solid var(--purple);
     }
     
+    /* Chart Card */
     .chart-card {
         background: var(--card);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 1.25rem;
+        padding: 1rem;
         margin-bottom: 1rem;
     }
-    .chart-header { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
-    .chart-desc { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem; }
+    .chart-header { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .chart-desc { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
     
-    .nav-card {
+    /* Skills Tags */
+    .skill-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
+    .skill-tag {
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid var(--purple);
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        color: var(--purple);
+    }
+    
+    /* Footer */
+    .footer-box {
         background: var(--card);
         border: 1px solid var(--border);
         border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
-        transition: all 0.2s;
+        margin-top: 2rem;
     }
-    .nav-card:hover { border-color: var(--purple); transform: translateY(-2px); }
-    .nav-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .nav-title { font-size: 1rem; font-weight: 600; color: var(--text); }
-    .nav-desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.25rem; }
+    .footer-box h3 { color: var(--text); font-size: 1rem; margin: 0 0 0.5rem 0; }
+    .footer-box p { color: var(--text-dim); font-size: 0.85rem; margin: 0; }
+    .github-btn {
+        display: inline-block;
+        background: var(--purple);
+        padding: 0.5rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 1rem;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -136,11 +176,45 @@ except Exception as e:
     st.stop()
 
 
-# Header
+# ===== SIDEBAR =====
+with st.sidebar:
+    st.markdown("""
+    <div class="sidebar-brand">
+        <h2>🛒 Olist Analytics</h2>
+        <p>Data Engineering Portfolio</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 🧭 Navigation")
+    st.page_link("streamlit_app.py", label="🏠 Home", use_container_width=True)
+    st.page_link("pages/1_Data_Engineering.py", label="🔧 Data Engineering", use_container_width=True)
+    st.page_link("pages/2_Analytics.py", label="📊 Analytics", use_container_width=True)
+    st.page_link("pages/3_Query_Data.py", label="🔍 Query Data", use_container_width=True)
+    
+    st.markdown("---")
+    st.markdown("### 📊 Quick Stats")
+    st.metric("Products", f"{len(dim_products):,}")
+    st.metric("Sellers", f"{len(dim_sellers):,}")
+    st.metric("Avg Rating", f"{dim_sellers['avg_review_score'].mean():.2f} ⭐")
+    
+    st.markdown("---")
+    st.markdown("### 🛠️ Tech Stack")
+    st.markdown("""
+    <div class="skill-tags">
+        <span class="skill-tag">dbt</span>
+        <span class="skill-tag">SQL</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">MotherDuck</span>
+        <span class="skill-tag">Streamlit</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ===== MAIN CONTENT =====
 st.markdown("""
 <div class="header-box">
-    <h1>🛒 Olist E-commerce Analytics</h1>
-    <p>Brazilian marketplace data • 100K+ orders • 2016-2018 • Powered by dbt + MotherDuck</p>
+    <h1>🛒 Olist E-commerce Analytics Platform</h1>
+    <p>End-to-end data pipeline: Raw CSV → MotherDuck → dbt transformations → Interactive Dashboard</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -157,7 +231,7 @@ st.markdown(f"""
         <div class="kpi-icon">💰</div>
         <div class="kpi-label">Total Revenue</div>
         <div class="kpi-value">{fmt_curr(total_rev)}</div>
-        <div class="kpi-desc">Sum of all order values</div>
+        <div class="kpi-desc">Sum of all orders</div>
     </div>
     <div class="kpi-card">
         <div class="kpi-icon">📦</div>
@@ -169,7 +243,7 @@ st.markdown(f"""
         <div class="kpi-icon">👥</div>
         <div class="kpi-label">Customers</div>
         <div class="kpi-value">{fmt_num(total_cust)}</div>
-        <div class="kpi-desc">Unique customers</div>
+        <div class="kpi-desc">Unique buyers</div>
     </div>
     <div class="kpi-card">
         <div class="kpi-icon">🛍️</div>
@@ -181,16 +255,16 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 
-# Quick Stats
-st.markdown('<div class="section-title">📈 Quick Overview</div>', unsafe_allow_html=True)
+# Quick Charts
+st.markdown('<div class="section-title">📈 Overview</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("""
     <div class="chart-card">
-        <div class="chart-header">Monthly Revenue Trend</div>
-        <div class="chart-desc">X: Month | Y: Revenue (R$) | Shows revenue growth over time</div>
+        <div class="chart-header">Monthly Revenue</div>
+        <div class="chart-desc">X: Month | Y: Revenue (R$)</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -198,18 +272,12 @@ with col1:
     monthly['month'] = monthly['order_purchase_timestamp'].dt.to_period('M').astype(str)
     m_agg = monthly.groupby('month')['total_order_value'].sum().reset_index()
     
-    fig = go.Figure(go.Bar(
-        x=m_agg['month'], y=m_agg['total_order_value'],
-        marker_color='#a855f7',
-        hovertemplate='%{x}<br>R$%{y:,.0f}<extra></extra>'
-    ))
-    
+    fig = go.Figure(go.Bar(x=m_agg['month'], y=m_agg['total_order_value'], marker_color='#a855f7'))
     fig.update_layout(
-        height=300,
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(title='Month', tickfont=dict(color='#9898a0'), title_font=dict(color='#9898a0')),
-        yaxis=dict(title='Revenue (R$)', gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0'), title_font=dict(color='#9898a0')),
-        margin=dict(t=20, b=60)
+        height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(tickfont=dict(color='#9898a0', size=9)),
+        yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0', size=9)),
+        margin=dict(t=10, b=40, l=50, r=10)
     )
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
@@ -217,7 +285,7 @@ with col2:
     st.markdown("""
     <div class="chart-card">
         <div class="chart-header">Top 5 Categories</div>
-        <div class="chart-desc">X: Revenue (R$) | Y: Category | Top performing categories</div>
+        <div class="chart-desc">X: Revenue (R$) | Y: Category</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -226,61 +294,57 @@ with col2:
     
     fig = go.Figure(go.Bar(
         x=cat_data['total_order_value'], y=cat_data['product_category_name'],
-        orientation='h',
-        marker=dict(color=['#6366f1', '#8b5cf6', '#a855f7', '#c084fc', '#ec4899']),
-        hovertemplate='%{y}<br>R$%{x:,.0f}<extra></extra>'
+        orientation='h', marker_color=['#6366f1', '#8b5cf6', '#a855f7', '#c084fc', '#ec4899']
     ))
-    
     fig.update_layout(
-        height=300,
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(title='Revenue (R$)', gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0'), title_font=dict(color='#9898a0')),
-        yaxis=dict(tickfont=dict(color='#fff', size=10)),
-        margin=dict(l=10, r=20, t=20, b=60)
+        height=280, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a0', size=9)),
+        yaxis=dict(tickfont=dict(color='#fff', size=9)),
+        margin=dict(t=10, b=40, l=10, r=10)
     )
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
-# Navigation Cards
-st.markdown('<div class="section-title">🧭 Explore More</div>', unsafe_allow_html=True)
+# What This Project Demonstrates
+st.markdown('<div class="section-title">🎯 Skills Demonstrated</div>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("""
-    <div class="nav-card">
-        <div class="nav-icon">📊</div>
-        <div class="nav-title">Analytics</div>
-        <div class="nav-desc">Detailed charts with filters</div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.page_link("pages/1_Analytics.py", label="Go to Analytics →", use_container_width=True)
+    #### 🔧 Data Engineering
+    - dbt dimensional modeling (Kimball)
+    - 3-layer architecture (staging → marts)
+    - SQL transformations & CTEs
+    - Data quality testing
+    """)
 
 with col2:
     st.markdown("""
-    <div class="nav-card">
-        <div class="nav-icon">🔍</div>
-        <div class="nav-title">Query Data</div>
-        <div class="nav-desc">Search & download data</div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.page_link("pages/2_Query_Data.py", label="Go to Query Data →", use_container_width=True)
+    #### 📊 Analytics
+    - KPI calculations
+    - Time-series analysis
+    - Customer segmentation
+    - Geographic distribution
+    """)
 
 with col3:
     st.markdown("""
-    <div class="nav-card">
-        <div class="nav-icon">🔧</div>
-        <div class="nav-title">Data Engineering</div>
-        <div class="nav-desc">SQL & dbt showcase</div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.page_link("pages/3_Data_Engineering.py", label="Go to Data Engineering →", use_container_width=True)
+    #### 💻 Tech Stack
+    - MotherDuck (Cloud DuckDB)
+    - dbt Core
+    - Python / Pandas
+    - Streamlit / Plotly
+    """)
 
 
-# Quick Stats at bottom
-st.markdown("---")
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Products", f"{len(dim_products):,}")
-col2.metric("Sellers", f"{len(dim_sellers):,}")
-col3.metric("Avg Rating", f"{dim_sellers['avg_review_score'].mean():.2f} ⭐")
-col4.metric("States", f"{dim_customers['state'].nunique()}")
+# Footer
+st.markdown("""
+<div class="footer-box">
+    <h3>Olist E-commerce Analytics Platform</h3>
+    <p>Built to demonstrate data engineering skills • Brazilian marketplace dataset</p>
+    <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="github-btn">
+        📂 View Source Code
+    </a>
+</div>
+""", unsafe_allow_html=True)
