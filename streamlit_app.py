@@ -511,31 +511,144 @@ with col2:
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
-# ===== DATA EXPLORER =====
-st.markdown('<div class="section-title">📋 Data Explorer - Drill Down Into Details</div>', unsafe_allow_html=True)
+# ===== QUERY DATA - INTERACTIVE =====
+st.markdown('<div class="section-title">🔍 Query Data - Get Specific Information</div>', unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["🏆 Top Products by Revenue", "👥 Top Customers by Lifetime Value", "🏪 Top Sellers by Revenue"])
+st.markdown("""
+<div class="chart-card">
+    <div class="chart-header">Interactive Data Query</div>
+    <div class="chart-desc">
+        Select filters below to get specific data. You can filter by month, category, or state, 
+        then <strong>download the results as CSV</strong> for your own analysis.
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-with tab1:
-    st.markdown("**Showing top 15 products ranked by total revenue generated**")
+query_tab1, query_tab2, query_tab3 = st.tabs(["📅 Orders by Month", "🏷️ Products by Category", "📍 Customers by State"])
+
+with query_tab1:
+    st.markdown("### 📅 Get Orders for a Specific Month")
+    
+    # Create month options
+    df_query = fct_orders.copy()
+    df_query['month'] = df_query['order_purchase_timestamp'].dt.to_period('M').astype(str)
+    available_months = sorted(df_query['month'].unique().tolist())
+    
+    selected_month = st.selectbox("Select Month", available_months, index=len(available_months)-1, key="month_select")
+    
+    # Filter data
+    month_data = df_query[df_query['month'] == selected_month][
+        ['order_id', 'customer_id', 'product_category_name', 'price', 'freight_value', 'total_order_value', 'order_purchase_timestamp']
+    ].copy()
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Orders in Month", f"{month_data['order_id'].nunique():,}")
+    col2.metric("Revenue", fmt_curr(month_data['total_order_value'].sum()))
+    col3.metric("Avg Order Value", fmt_curr(month_data['total_order_value'].mean()))
+    
+    st.markdown(f"**Showing first 100 orders from {selected_month}:**")
+    display_month = month_data.head(100).copy()
+    display_month['total_order_value'] = display_month['total_order_value'].apply(lambda x: f"R$ {x:.2f}")
+    display_month['price'] = display_month['price'].apply(lambda x: f"R$ {x:.2f}")
+    st.dataframe(display_month, use_container_width=True, hide_index=True)
+    
+    # Download button
+    csv_month = month_data.to_csv(index=False)
+    st.download_button(
+        label=f"📥 Download all {len(month_data):,} orders from {selected_month} as CSV",
+        data=csv_month,
+        file_name=f"olist_orders_{selected_month}.csv",
+        mime="text/csv"
+    )
+
+with query_tab2:
+    st.markdown("### 🏷️ Get Products by Category")
+    
+    # Category selector
+    all_categories = sorted(dim_products['product_category_name'].dropna().unique().tolist())
+    selected_cat_query = st.selectbox("Select Category", all_categories, key="cat_select")
+    
+    # Filter products
+    cat_products = dim_products[dim_products['product_category_name'] == selected_cat_query][
+        ['product_id', 'product_category_name', 'times_sold', 'total_revenue', 'sales_tier']
+    ].copy()
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Products in Category", f"{len(cat_products):,}")
+    col2.metric("Total Revenue", fmt_curr(cat_products['total_revenue'].sum()))
+    col3.metric("Total Units Sold", f"{cat_products['times_sold'].sum():,}")
+    
+    st.markdown(f"**All products in '{selected_cat_query}':**")
+    display_cat = cat_products.copy()
+    display_cat['total_revenue'] = display_cat['total_revenue'].apply(lambda x: f"R$ {x:.2f}")
+    st.dataframe(display_cat.sort_values('total_revenue', ascending=False), use_container_width=True, hide_index=True)
+    
+    # Download button
+    csv_cat = cat_products.to_csv(index=False)
+    st.download_button(
+        label=f"📥 Download all {len(cat_products):,} products in '{selected_cat_query}' as CSV",
+        data=csv_cat,
+        file_name=f"olist_products_{selected_cat_query.replace(' ', '_')}.csv",
+        mime="text/csv"
+    )
+
+with query_tab3:
+    st.markdown("### 📍 Get Customers by State")
+    
+    # State selector
+    all_states = sorted(dim_customers['state'].dropna().unique().tolist())
+    selected_state_query = st.selectbox("Select State", all_states, key="state_select")
+    
+    # Filter customers
+    state_customers = dim_customers[dim_customers['state'] == selected_state_query][
+        ['customer_unique_id', 'city', 'state', 'total_orders', 'lifetime_value', 'customer_type']
+    ].copy()
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Customers in State", f"{len(state_customers):,}")
+    col2.metric("Total LTV", fmt_curr(state_customers['lifetime_value'].sum()))
+    col3.metric("Avg Orders/Customer", f"{state_customers['total_orders'].mean():.2f}")
+    
+    st.markdown(f"**Top 100 customers in {selected_state_query} by lifetime value:**")
+    display_state = state_customers.nlargest(100, 'lifetime_value').copy()
+    display_state['lifetime_value'] = display_state['lifetime_value'].apply(lambda x: f"R$ {x:.2f}")
+    st.dataframe(display_state, use_container_width=True, hide_index=True)
+    
+    # Download button
+    csv_state = state_customers.to_csv(index=False)
+    st.download_button(
+        label=f"📥 Download all {len(state_customers):,} customers in '{selected_state_query}' as CSV",
+        data=csv_state,
+        file_name=f"olist_customers_{selected_state_query}.csv",
+        mime="text/csv"
+    )
+
+
+# ===== TOP PERFORMERS =====
+st.markdown('<div class="section-title">📋 Top Performers Summary</div>', unsafe_allow_html=True)
+
+top_tab1, top_tab2, top_tab3 = st.tabs(["🏆 Top Products", "👥 Top Customers", "🏪 Top Sellers"])
+
+with top_tab1:
+    st.markdown("**Top 15 products by total revenue:**")
     prods = dim_products.nlargest(15, 'total_revenue')[['product_id', 'product_category_name', 'times_sold', 'total_revenue', 'sales_tier']].copy()
     prods.columns = ['Product ID', 'Category', 'Times Sold', 'Total Revenue (R$)', 'Sales Tier']
     prods['Total Revenue (R$)'] = prods['Total Revenue (R$)'].apply(lambda x: f"R$ {x:,.2f}")
     st.dataframe(prods, use_container_width=True, hide_index=True)
 
-with tab2:
-    st.markdown("**Showing top 15 customers ranked by total lifetime spending**")
+with top_tab2:
+    st.markdown("**Top 15 customers by lifetime value:**")
     custs = dim_customers.nlargest(15, 'lifetime_value')[['customer_unique_id', 'city', 'state', 'total_orders', 'lifetime_value', 'customer_type']].copy()
     custs.columns = ['Customer ID', 'City', 'State', 'Total Orders', 'Lifetime Value (R$)', 'Customer Type']
     custs['Lifetime Value (R$)'] = custs['Lifetime Value (R$)'].apply(lambda x: f"R$ {x:,.2f}")
     st.dataframe(custs, use_container_width=True, hide_index=True)
 
-with tab3:
-    st.markdown("**Showing top 15 sellers ranked by total revenue generated**")
+with top_tab3:
+    st.markdown("**Top 15 sellers by total revenue:**")
     sells = dim_sellers.nlargest(15, 'total_revenue')[['seller_id', 'state', 'total_orders', 'total_revenue', 'avg_review_score', 'seller_tier']].copy()
-    sells.columns = ['Seller ID', 'State', 'Orders Fulfilled', 'Total Revenue (R$)', 'Avg Rating (1-5)', 'Performance Tier']
+    sells.columns = ['Seller ID', 'State', 'Orders Fulfilled', 'Total Revenue (R$)', 'Avg Rating', 'Tier']
     sells['Total Revenue (R$)'] = sells['Total Revenue (R$)'].apply(lambda x: f"R$ {x:,.2f}")
-    sells['Avg Rating (1-5)'] = sells['Avg Rating (1-5)'].apply(lambda x: f"{x:.2f} ⭐")
+    sells['Avg Rating'] = sells['Avg Rating'].apply(lambda x: f"{x:.2f} ⭐")
     st.dataframe(sells, use_container_width=True, hide_index=True)
 
 
