@@ -831,7 +831,7 @@ with col2:
     seller_stats = seller_stats.sort_values('tier')
     
     tier_colors = {
-        'Platinum': 'linear-gradient(135deg, #e5e4e2, #c0c0c0)', 
+        'Platinum': '#e5e4e2', 
         'Gold': '#fbbf24', 
         'Silver': '#94a3b8', 
         'Bronze': '#d97706'
