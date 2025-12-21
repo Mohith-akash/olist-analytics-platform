@@ -1,7 +1,6 @@
 """
 🛒 Olist E-commerce Analytics Dashboard
-Enterprise-grade SaaS analytics dashboard
-Inspired by: Linear, Vercel, Stripe Dashboard aesthetics
+Premium interactive dashboard with filters, vibrant colors, and modern design
 """
 
 import streamlit as st
@@ -10,7 +9,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 
 # Page Configuration
@@ -18,147 +17,210 @@ st.set_page_config(
     page_title="Olist Analytics",
     page_icon="🛒",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# Enterprise SaaS Dashboard CSS
+# Premium Interactive Theme
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     
     :root {
-        --bg-primary: #09090b;
-        --bg-secondary: #18181b;
-        --bg-tertiary: #27272a;
-        --bg-card: rgba(24, 24, 27, 0.8);
-        --border-color: rgba(63, 63, 70, 0.5);
-        --border-hover: rgba(99, 102, 241, 0.5);
-        --text-primary: #fafafa;
-        --text-secondary: #a1a1aa;
-        --text-muted: #71717a;
-        --accent-primary: #6366f1;
-        --accent-secondary: #8b5cf6;
-        --accent-success: #22c55e;
-        --accent-warning: #f59e0b;
-        --accent-danger: #ef4444;
-        --accent-info: #06b6d4;
+        --bg-dark: #0f0f14;
+        --bg-card: #1a1a24;
+        --bg-hover: #252532;
+        --border: rgba(255,255,255,0.1);
+        --text-bright: #ffffff;
+        --text-primary: #f0f0f5;
+        --text-secondary: #9898a6;
+        --accent-purple: #7c3aed;
+        --accent-violet: #8b5cf6;
+        --accent-pink: #ec4899;
+        --accent-blue: #3b82f6;
+        --accent-cyan: #22d3ee;
+        --accent-green: #22c55e;
+        --accent-orange: #f97316;
+        --accent-yellow: #eab308;
     }
     
-    * {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+    * { font-family: 'Inter', sans-serif; }
     
     .stApp {
-        background: var(--bg-primary);
+        background: linear-gradient(180deg, var(--bg-dark) 0%, #0a0a0f 100%);
     }
     
-    /* Hide defaults */
-    #MainMenu, footer, header {visibility: hidden;}
-    .block-container {padding: 2rem 3rem 3rem 3rem; max-width: 100%;}
+    #MainMenu, footer, header { visibility: hidden; }
+    .block-container { padding: 1.5rem 2rem; max-width: 100%; }
     
-    /* ===== NAVIGATION BAR ===== */
-    .nav-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 0;
-        border-bottom: 1px solid var(--border-color);
+    /* ===== HERO HEADER ===== */
+    .hero {
+        background: linear-gradient(135deg, #7c3aed 0%, #ec4899 50%, #f97316 100%);
+        padding: 2rem 2.5rem;
+        border-radius: 16px;
         margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
     }
     
-    .nav-brand {
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='%23ffffff' fill-opacity='0.05'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+    
+    .hero-content { position: relative; z-index: 1; }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    
+    .hero-sub {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.9);
+        margin-top: 0.5rem;
+    }
+    
+    .hero-badges {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
     }
     
-    .nav-brand-icon {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
+    .hero-badge {
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        padding: 0.4rem 1rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: white;
+        border: 1px solid rgba(255,255,255,0.3);
     }
     
-    .nav-brand-text {
+    /* ===== SIDEBAR ===== */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1a1a24 0%, #0f0f14 100%);
+        border-right: 1px solid var(--border);
+    }
+    
+    section[data-testid="stSidebar"] > div { background: transparent; }
+    
+    .sidebar-header {
         font-size: 1.25rem;
         font-weight: 700;
-        color: var(--text-primary);
-        letter-spacing: -0.5px;
-    }
-    
-    .nav-badge {
-        background: rgba(34, 197, 94, 0.15);
-        color: var(--accent-success);
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        margin-left: 0.75rem;
-    }
-    
-    .nav-links {
+        color: var(--text-bright);
+        margin-bottom: 0.5rem;
         display: flex;
+        align-items: center;
         gap: 0.5rem;
     }
     
-    .nav-link {
-        padding: 0.5rem 1rem;
-        color: var(--text-secondary);
-        text-decoration: none;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: all 0.2s;
+    .sidebar-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
     
-    .nav-link:hover, .nav-link.active {
-        background: var(--bg-tertiary);
-        color: var(--text-primary);
+    .sidebar-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent-violet);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
     }
     
-    /* ===== STATS GRID ===== */
-    .stats-grid {
+    /* ===== KPI CARDS ===== */
+    .kpi-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 1rem;
         margin-bottom: 2rem;
     }
     
-    .stat-card {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 1.25rem 1.5rem;
-        transition: all 0.2s ease;
+    .kpi-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
     }
     
-    .stat-card:hover {
-        border-color: var(--border-hover);
-        transform: translateY(-2px);
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+        opacity: 0;
+        transition: opacity 0.3s;
     }
     
-    .stat-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .kpi-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-purple);
+        box-shadow: 0 20px 40px rgba(124, 58, 237, 0.2);
+    }
+    
+    .kpi-card:hover::before { opacity: 1; }
+    
+    .kpi-icon {
+        font-size: 2rem;
         margin-bottom: 0.75rem;
     }
     
-    .stat-label {
+    .kpi-label {
         font-size: 0.8rem;
-        font-weight: 500;
+        font-weight: 600;
         color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     
-    .stat-icon {
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--text-bright), var(--accent-violet));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0.25rem 0;
+    }
+    
+    .kpi-trend {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--accent-green);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    /* ===== SECTION HEADERS ===== */
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-bright);
+        margin: 2rem 0 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-icon {
         width: 32px;
         height: 32px;
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -166,230 +228,132 @@ st.markdown("""
         font-size: 1rem;
     }
     
-    .stat-icon.purple { background: rgba(99, 102, 241, 0.15); }
-    .stat-icon.green { background: rgba(34, 197, 94, 0.15); }
-    .stat-icon.blue { background: rgba(6, 182, 212, 0.15); }
-    .stat-icon.orange { background: rgba(245, 158, 11, 0.15); }
-    
-    .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        letter-spacing: -1px;
-        line-height: 1;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-trend {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-    
-    .stat-trend.up { color: var(--accent-success); }
-    .stat-trend.down { color: var(--accent-danger); }
-    .stat-trend.neutral { color: var(--text-muted); }
-    
     /* ===== CHART CARDS ===== */
     .chart-card {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
         padding: 1.5rem;
         margin-bottom: 1rem;
     }
     
     .chart-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-    }
-    
-    .chart-title {
         font-size: 1rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: var(--text-bright);
+        margin-bottom: 0.25rem;
     }
     
     .chart-subtitle {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        margin-top: 0.25rem;
-    }
-    
-    .chart-actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .chart-action-btn {
-        padding: 0.375rem 0.75rem;
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
+        font-size: 0.85rem;
         color: var(--text-secondary);
-        font-size: 0.75rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .chart-action-btn:hover, .chart-action-btn.active {
-        background: var(--accent-primary);
-        border-color: var(--accent-primary);
-        color: white;
-    }
-    
-    /* ===== SECTION HEADERS ===== */
-    .section-header {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin: 2.5rem 0 1.25rem 0;
-    }
-    
-    .section-icon {
-        width: 28px;
-        height: 28px;
-        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.875rem;
-    }
-    
-    .section-title {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-    
-    /* ===== DATA TABLE ===== */
-    .data-table-container {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    
-    .data-table-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    .data-table-title {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--text-primary);
+        margin-bottom: 1rem;
     }
     
     /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
         padding: 4px;
         gap: 4px;
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
-        border-radius: 6px;
         color: var(--text-secondary);
+        border-radius: 8px;
         font-weight: 500;
-        font-size: 0.875rem;
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1.25rem;
     }
     
     .stTabs [aria-selected="true"] {
-        background: var(--bg-tertiary) !important;
-        color: var(--text-primary) !important;
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)) !important;
+        color: white !important;
     }
     
     /* ===== FOOTER ===== */
-    .footer-container {
-        margin-top: 4rem;
-        padding: 2rem 0;
-        border-top: 1px solid var(--border-color);
+    .footer {
         text-align: center;
+        padding: 2.5rem;
+        margin-top: 3rem;
+        border-top: 1px solid var(--border);
+        background: var(--bg-card);
+        border-radius: 16px 16px 0 0;
     }
     
-    .footer-brand {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
+    .footer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--text-bright), var(--accent-violet));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     
-    .footer-tagline {
-        font-size: 0.875rem;
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
-    }
+    .footer-sub { color: var(--text-secondary); margin: 0.5rem 0 1.5rem 0; }
     
-    .footer-tech-stack {
+    .tech-stack {
         display: flex;
         justify-content: center;
-        gap: 1rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
         margin-bottom: 1.5rem;
     }
     
     .tech-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+        background: var(--bg-hover);
+        border: 1px solid var(--border);
         padding: 0.5rem 1rem;
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        border-radius: 9999px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-secondary);
+        border-radius: 999px;
+        font-size: 0.85rem;
+        color: var(--text-primary);
         transition: all 0.2s;
     }
     
     .tech-badge:hover {
-        border-color: var(--accent-primary);
-        color: var(--text-primary);
+        border-color: var(--accent-purple);
+        background: rgba(124, 58, 237, 0.15);
     }
     
-    .footer-link {
+    .github-btn {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.625rem 1.5rem;
-        background: var(--accent-primary);
-        border-radius: 8px;
+        background: var(--accent-purple);
         color: white;
-        font-size: 0.875rem;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
         font-weight: 600;
         text-decoration: none;
         transition: all 0.2s;
     }
     
-    .footer-link:hover {
-        background: var(--accent-secondary);
-        transform: translateY(-1px);
+    .github-btn:hover {
+        background: var(--accent-pink);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.3);
     }
     
-    /* ===== CUSTOM SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg-primary); }
-    ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { 
+        background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink)); 
+        border-radius: 4px; 
+    }
     
-    /* ===== STREAMLIT OVERRIDES ===== */
-    .stDataFrame { border-radius: 8px; overflow: hidden; }
-    [data-testid="stMetricValue"] { color: var(--text-primary) !important; }
-    .stSelectbox > div > div { background: var(--bg-tertiary) !important; border-color: var(--border-color) !important; }
+    /* ===== FORM ELEMENTS ===== */
+    .stSelectbox > div > div,
+    .stMultiSelect > div > div {
+        background: var(--bg-hover) !important;
+        border-color: var(--border) !important;
+        color: var(--text-bright) !important;
+    }
+    
+    .stDateInput > div > div > input {
+        background: var(--bg-hover) !important;
+        color: var(--text-bright) !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -413,12 +377,11 @@ def load_data():
     return fct_orders, dim_customers, dim_products, dim_sellers
 
 
-def format_currency(value, short=True):
-    if short:
-        if value >= 1_000_000:
-            return f"R${value/1_000_000:.1f}M"
-        elif value >= 1_000:
-            return f"R${value/1_000:.0f}K"
+def format_currency(value):
+    if value >= 1_000_000:
+        return f"R$ {value/1_000_000:.2f}M"
+    elif value >= 1_000:
+        return f"R$ {value/1_000:.1f}K"
     return f"R$ {value:,.2f}"
 
 
@@ -439,428 +402,347 @@ except Exception as e:
     error_message = str(e)
 
 
-# Navigation Bar
+# ===== SIDEBAR WITH FILTERS =====
+with st.sidebar:
+    st.markdown('<div class="sidebar-header">🎛️ Control Panel</div>', unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Date Range Filter
+    st.markdown('<div class="sidebar-label">📅 Date Range</div>', unsafe_allow_html=True)
+    
+    if data_loaded and 'order_purchase_timestamp' in fct_orders.columns:
+        fct_orders['order_purchase_timestamp'] = pd.to_datetime(fct_orders['order_purchase_timestamp'])
+        min_date = fct_orders['order_purchase_timestamp'].min().date()
+        max_date = fct_orders['order_purchase_timestamp'].max().date()
+        
+        date_range = st.date_input(
+            "Select dates",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date,
+            label_visibility="collapsed"
+        )
+    
+    st.markdown("---")
+    
+    # Category Filter
+    st.markdown('<div class="sidebar-label">🏷️ Product Category</div>', unsafe_allow_html=True)
+    
+    if data_loaded:
+        categories = ['All Categories'] + sorted(fct_orders['product_category_name'].dropna().unique().tolist())
+        selected_category = st.selectbox("Select category", categories, label_visibility="collapsed")
+    
+    st.markdown("---")
+    
+    # State Filter
+    st.markdown('<div class="sidebar-label">📍 Customer State</div>', unsafe_allow_html=True)
+    
+    if data_loaded:
+        states = ['All States'] + sorted(dim_customers['state'].dropna().unique().tolist())
+        selected_state = st.selectbox("Select state", states, label_visibility="collapsed")
+    
+    st.markdown("---")
+    
+    # Quick Stats
+    st.markdown('<div class="sidebar-label">📊 Quick Stats</div>', unsafe_allow_html=True)
+    
+    if data_loaded:
+        st.metric("Total Products", format_number(dim_products['product_id'].nunique()))
+        st.metric("Total Sellers", format_number(dim_sellers['seller_id'].nunique()))
+        st.metric("Avg Rating", f"{dim_sellers['avg_review_score'].mean():.2f} ⭐")
+
+
+if not data_loaded:
+    st.error(f"❌ Connection Error: {error_message}")
+    st.stop()
+
+
+# Apply Filters
+filtered_orders = fct_orders.copy()
+
+if len(date_range) == 2:
+    mask = (filtered_orders['order_purchase_timestamp'].dt.date >= date_range[0]) & \
+           (filtered_orders['order_purchase_timestamp'].dt.date <= date_range[1])
+    filtered_orders = filtered_orders[mask]
+
+if selected_category != 'All Categories':
+    filtered_orders = filtered_orders[filtered_orders['product_category_name'] == selected_category]
+
+
+# ===== HERO HEADER =====
 st.markdown("""
-<div class="nav-bar">
-    <div class="nav-brand">
-        <div class="nav-brand-icon">🛒</div>
-        <span class="nav-brand-text">Olist Analytics</span>
-        <span class="nav-badge">● Live</span>
-    </div>
-    <div class="nav-links">
-        <a href="#" class="nav-link active">Dashboard</a>
-        <a href="#" class="nav-link">Revenue</a>
-        <a href="#" class="nav-link">Customers</a>
-        <a href="#" class="nav-link">Products</a>
+<div class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">🛒 Olist E-commerce Analytics</h1>
+        <p class="hero-sub">Real-time insights from 100K+ Brazilian e-commerce orders</p>
+        <div class="hero-badges">
+            <span class="hero-badge">📊 dbt Models</span>
+            <span class="hero-badge">🦆 MotherDuck</span>
+            <span class="hero-badge">⚡ Real-time</span>
+            <span class="hero-badge">✨ Interactive</span>
+        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 
-if not data_loaded:
-    st.error(f"Connection failed: {error_message}")
-    st.stop()
-
-
-# Prepare data
-fct_orders['order_purchase_timestamp'] = pd.to_datetime(fct_orders['order_purchase_timestamp'])
-filtered_orders = fct_orders
-
-# Calculate metrics
+# Calculate KPIs
 total_revenue = filtered_orders['total_order_value'].sum()
 total_orders = filtered_orders['order_id'].nunique()
 total_customers = dim_customers['customer_id'].nunique()
 avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
 
 
-# Stats Grid
+# ===== KPI CARDS =====
 st.markdown(f"""
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Total Revenue</span>
-            <div class="stat-icon purple">💰</div>
-        </div>
-        <div class="stat-value">{format_currency(total_revenue)}</div>
-        <div class="stat-trend up">
-            <span>↗</span> 12.5% from last period
-        </div>
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-value">{format_currency(total_revenue)}</div>
+        <div class="kpi-trend">↗ 12.5% growth</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Total Orders</span>
-            <div class="stat-icon green">📦</div>
-        </div>
-        <div class="stat-value">{format_number(total_orders)}</div>
-        <div class="stat-trend up">
-            <span>↗</span> 8.2% growth
-        </div>
+    <div class="kpi-card">
+        <div class="kpi-icon">📦</div>
+        <div class="kpi-label">Orders</div>
+        <div class="kpi-value">{format_number(total_orders)}</div>
+        <div class="kpi-trend">↗ 8.2% vs last</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Customers</span>
-            <div class="stat-icon blue">👥</div>
-        </div>
-        <div class="stat-value">{format_number(total_customers)}</div>
-        <div class="stat-trend up">
-            <span>↗</span> 15.3% new users
-        </div>
+    <div class="kpi-card">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-label">Customers</div>
+        <div class="kpi-value">{format_number(total_customers)}</div>
+        <div class="kpi-trend">↗ 15.3% new</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Avg Order Value</span>
-            <div class="stat-icon orange">🛍️</div>
-        </div>
-        <div class="stat-value">{format_currency(avg_order_value)}</div>
-        <div class="stat-trend neutral">
-            <span>→</span> Stable
-        </div>
+    <div class="kpi-card">
+        <div class="kpi-icon">🛍️</div>
+        <div class="kpi-label">Avg Order</div>
+        <div class="kpi-value">{format_currency(avg_order_value)}</div>
+        <div class="kpi-trend">→ Stable</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 
-# Charts Section
+# ===== CHARTS =====
+st.markdown('<div class="section-title"><div class="section-icon">📈</div>Revenue Analytics</div>', unsafe_allow_html=True)
+
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    # Revenue Chart
-    st.markdown("""
-    <div class="chart-card">
-        <div class="chart-header">
-            <div>
-                <div class="chart-title">Revenue Overview</div>
-                <div class="chart-subtitle">Monthly revenue and order volume</div>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="chart-card"><div class="chart-header">Monthly Revenue Trend</div><div class="chart-subtitle">Revenue and order volume over time</div></div>', unsafe_allow_html=True)
     
-    # Prepare monthly data
-    monthly_data = filtered_orders.copy()
-    monthly_data['month'] = monthly_data['order_purchase_timestamp'].dt.to_period('M').astype(str)
-    monthly_agg = monthly_data.groupby('month').agg({
-        'total_order_value': 'sum',
-        'order_id': 'nunique'
-    }).reset_index()
+    monthly = filtered_orders.copy()
+    monthly['month'] = monthly['order_purchase_timestamp'].dt.to_period('M').astype(str)
+    monthly_agg = monthly.groupby('month').agg({'total_order_value': 'sum', 'order_id': 'nunique'}).reset_index()
     monthly_agg.columns = ['month', 'revenue', 'orders']
     
-    fig = go.Figure()
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
     
-    # Area chart for revenue
     fig.add_trace(go.Scatter(
-        x=monthly_agg['month'],
-        y=monthly_agg['revenue'],
-        name='Revenue',
-        fill='tozeroy',
-        fillcolor='rgba(99, 102, 241, 0.15)',
-        line=dict(color='#6366f1', width=2.5),
-        mode='lines',
-        hovertemplate='%{x}<br>Revenue: R$%{y:,.0f}<extra></extra>'
-    ))
+        x=monthly_agg['month'], y=monthly_agg['revenue'],
+        name='Revenue', fill='tozeroy',
+        fillcolor='rgba(124, 58, 237, 0.3)',
+        line=dict(color='#8b5cf6', width=3),
+        mode='lines+markers',
+        marker=dict(size=8, color='#a78bfa')
+    ), secondary_y=False)
     
-    # Line for orders
-    fig.add_trace(go.Scatter(
-        x=monthly_agg['month'],
-        y=monthly_agg['orders'],
-        name='Orders',
-        line=dict(color='#22c55e', width=2, dash='dot'),
-        mode='lines',
-        yaxis='y2',
-        hovertemplate='%{x}<br>Orders: %{y:,.0f}<extra></extra>'
-    ))
+    fig.add_trace(go.Bar(
+        x=monthly_agg['month'], y=monthly_agg['orders'],
+        name='Orders', marker_color='rgba(236, 72, 153, 0.6)',
+        opacity=0.8
+    ), secondary_y=True)
     
     fig.update_layout(
-        height=350,
-        margin=dict(l=0, r=0, t=20, b=40),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            showgrid=False,
-            tickfont=dict(color='#71717a', size=11),
-            linecolor='rgba(63,63,70,0.5)'
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridcolor='rgba(63,63,70,0.3)',
-            tickfont=dict(color='#71717a', size=11),
-            title=None
-        ),
-        yaxis2=dict(
-            overlaying='y',
-            side='right',
-            showgrid=False,
-            tickfont=dict(color='#71717a', size=11),
-            title=None
-        ),
-        legend=dict(
-            orientation='h',
-            yanchor='bottom',
-            y=1.02,
-            xanchor='left',
-            x=0,
-            font=dict(color='#a1a1aa', size=12),
-            bgcolor='rgba(0,0,0,0)'
-        ),
+        height=380,
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a6')),
+        yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a6'), title='Revenue'),
+        yaxis2=dict(tickfont=dict(color='#9898a6'), title='Orders', showgrid=False),
+        legend=dict(orientation='h', y=1.1, font=dict(color='#f0f0f5')),
+        margin=dict(t=40, b=40),
         hovermode='x unified'
     )
     
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    # Customer Segments
-    st.markdown("""
-    <div class="chart-card">
-        <div class="chart-header">
-            <div>
-                <div class="chart-title">Customer Segments</div>
-                <div class="chart-subtitle">Revenue by customer type</div>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="chart-card"><div class="chart-header">Customer Segments</div><div class="chart-subtitle">Revenue distribution by type</div></div>', unsafe_allow_html=True)
     
-    customer_revenue = dim_customers.groupby('customer_type')['lifetime_value'].sum().reset_index()
-    colors = ['#6366f1', '#22c55e', '#3f3f46']
+    cust_rev = dim_customers.groupby('customer_type')['lifetime_value'].sum().reset_index()
+    colors = ['#8b5cf6', '#22c55e', '#3f3f46']
     
-    fig = go.Figure(data=[go.Pie(
-        labels=customer_revenue['customer_type'],
-        values=customer_revenue['lifetime_value'],
-        hole=0.75,
-        marker=dict(colors=colors, line=dict(color='#09090b', width=2)),
-        textinfo='none',
-        hovertemplate='%{label}<br>R$%{value:,.0f}<br>%{percent}<extra></extra>'
-    )])
-    
-    # Center text
-    total_customer_revenue = customer_revenue['lifetime_value'].sum()
-    
-    fig.update_layout(
-        height=350,
-        margin=dict(l=20, r=20, t=20, b=20),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        showlegend=True,
-        legend=dict(
-            orientation='h',
-            yanchor='bottom',
-            y=-0.1,
-            xanchor='center',
-            x=0.5,
-            font=dict(color='#a1a1aa', size=11),
-            bgcolor='rgba(0,0,0,0)'
-        ),
-        annotations=[
-            dict(
-                text=f"<b>{format_currency(total_customer_revenue)}</b><br><span style='color:#71717a;font-size:12px'>Total</span>",
-                x=0.5, y=0.5,
-                font=dict(size=18, color='#fafafa'),
-                showarrow=False
-            )
-        ]
-    )
-    
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-
-# Second Row Charts
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("""
-    <div class="section-header">
-        <div class="section-icon">📊</div>
-        <span class="section-title">Top Categories</span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    category_data = filtered_orders.groupby('product_category_name')['total_order_value'].sum().reset_index()
-    category_data = category_data.nlargest(8, 'total_order_value').sort_values('total_order_value', ascending=True)
-    
-    fig = go.Figure(go.Bar(
-        x=category_data['total_order_value'],
-        y=category_data['product_category_name'],
-        orientation='h',
-        marker=dict(
-            color='#6366f1',
-            line=dict(width=0)
-        ),
-        hovertemplate='%{y}<br>R$%{x:,.0f}<extra></extra>'
+    fig = go.Figure(go.Pie(
+        labels=cust_rev['customer_type'],
+        values=cust_rev['lifetime_value'],
+        hole=0.7,
+        marker=dict(colors=colors, line=dict(color='#0f0f14', width=3)),
+        textinfo='percent+label',
+        textfont=dict(color='#f0f0f5', size=11)
     ))
     
     fig.update_layout(
-        height=320,
-        margin=dict(l=0, r=40, t=10, b=10),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            showgrid=True,
-            gridcolor='rgba(63,63,70,0.3)',
-            tickfont=dict(color='#71717a', size=10)
-        ),
-        yaxis=dict(
-            showgrid=False,
-            tickfont=dict(color='#a1a1aa', size=11)
-        ),
-        bargap=0.4
+        height=380,
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        showlegend=False,
+        margin=dict(t=40, b=40),
+        annotations=[dict(text='<b>Customers</b>', x=0.5, y=0.5, font=dict(size=14, color='#f0f0f5'), showarrow=False)]
     )
     
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, use_container_width=True)
+
+
+# Top Categories & Sellers
+st.markdown('<div class="section-title"><div class="section-icon">🏆</div>Top Performers</div>', unsafe_allow_html=True)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown('<div class="chart-card"><div class="chart-header">Top 8 Categories</div><div class="chart-subtitle">By revenue</div></div>', unsafe_allow_html=True)
+    
+    cat_data = filtered_orders.groupby('product_category_name')['total_order_value'].sum().reset_index()
+    cat_data = cat_data.nlargest(8, 'total_order_value').sort_values('total_order_value')
+    
+    fig = go.Figure(go.Bar(
+        x=cat_data['total_order_value'],
+        y=cat_data['product_category_name'],
+        orientation='h',
+        marker=dict(
+            color=cat_data['total_order_value'],
+            colorscale=[[0, '#7c3aed'], [0.5, '#ec4899'], [1, '#f97316']],
+        ),
+        text=[format_currency(x) for x in cat_data['total_order_value']],
+        textposition='outside',
+        textfont=dict(color='#c4b5fd', size=11)
+    ))
+    
+    fig.update_layout(
+        height=380,
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a6')),
+        yaxis=dict(tickfont=dict(color='#f0f0f5', size=10)),
+        margin=dict(l=0, r=100, t=20, b=20)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    st.markdown("""
-    <div class="section-header">
-        <div class="section-icon">⭐</div>
-        <span class="section-title">Seller Tiers</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="chart-card"><div class="chart-header">Seller Tiers</div><div class="chart-subtitle">Performance distribution</div></div>', unsafe_allow_html=True)
     
     seller_stats = dim_sellers.groupby('seller_tier').size().reset_index(name='count')
     tier_order = ['Platinum', 'Gold', 'Silver', 'Bronze']
     seller_stats['seller_tier'] = pd.Categorical(seller_stats['seller_tier'], categories=tier_order, ordered=True)
     seller_stats = seller_stats.sort_values('seller_tier')
     
-    tier_colors = {'Platinum': '#e5e4e2', 'Gold': '#fbbf24', 'Silver': '#71717a', 'Bronze': '#d97706'}
-    colors = [tier_colors.get(t, '#6366f1') for t in seller_stats['seller_tier']]
+    tier_colors = ['#e5e4e2', '#fbbf24', '#94a3b8', '#d97706']
     
     fig = go.Figure(go.Bar(
         x=seller_stats['seller_tier'],
         y=seller_stats['count'],
-        marker=dict(color=colors, line=dict(width=0)),
+        marker_color=tier_colors,
         text=seller_stats['count'],
         textposition='outside',
-        textfont=dict(color='#a1a1aa', size=12),
-        hovertemplate='%{x}<br>Sellers: %{y}<extra></extra>'
+        textfont=dict(color='#f0f0f5', size=13)
     ))
     
     fig.update_layout(
-        height=320,
-        margin=dict(l=0, r=0, t=10, b=10),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            showgrid=False,
-            tickfont=dict(color='#a1a1aa', size=12)
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridcolor='rgba(63,63,70,0.3)',
-            tickfont=dict(color='#71717a', size=10)
-        ),
-        bargap=0.5
+        height=380,
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(tickfont=dict(color='#f0f0f5', size=12)),
+        yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a6')),
+        margin=dict(t=20, b=20),
+        bargap=0.4
     )
     
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, use_container_width=True)
 
 
-# Geographic Section
-st.markdown("""
-<div class="section-header">
-    <div class="section-icon">🗺️</div>
-    <span class="section-title">Geographic Distribution</span>
-</div>
-""", unsafe_allow_html=True)
+# Geographic
+st.markdown('<div class="section-title"><div class="section-icon">🗺️</div>Geographic Distribution</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
-    state_data = dim_customers.groupby('state').size().reset_index(name='customers')
-    state_data = state_data.nlargest(10, 'customers')
+    state_cust = dim_customers.groupby('state').size().reset_index(name='customers')
+    state_cust = state_cust.nlargest(10, 'customers')
     
     fig = go.Figure(go.Bar(
-        x=state_data['state'],
-        y=state_data['customers'],
-        marker=dict(
-            color=state_data['customers'],
-            colorscale=[[0, '#3f3f46'], [0.5, '#6366f1'], [1, '#8b5cf6']],
-            line=dict(width=0)
-        ),
-        hovertemplate='%{x}<br>Customers: %{y:,}<extra></extra>'
+        x=state_cust['state'], y=state_cust['customers'],
+        marker=dict(color=state_cust['customers'], colorscale=[[0, '#7c3aed'], [1, '#ec4899']]),
+        text=state_cust['customers'], textposition='outside',
+        textfont=dict(color='#c4b5fd')
     ))
     
     fig.update_layout(
-        title=dict(text='Customers by State', font=dict(size=14, color='#fafafa'), x=0),
-        height=280,
-        margin=dict(l=0, r=0, t=40, b=10),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showgrid=False, tickfont=dict(color='#a1a1aa', size=11)),
-        yaxis=dict(showgrid=True, gridcolor='rgba(63,63,70,0.3)', tickfont=dict(color='#71717a', size=10)),
-        bargap=0.3
+        title=dict(text='Customers by State', font=dict(color='#f0f0f5', size=14)),
+        height=320, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(tickfont=dict(color='#f0f0f5')),
+        yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a6')),
+        margin=dict(t=50, b=20)
     )
     
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, use_container_width=True)
 
 with col2:
-    seller_state = dim_sellers.groupby('state').size().reset_index(name='sellers')
-    seller_state = seller_state.nlargest(10, 'sellers')
+    state_sell = dim_sellers.groupby('state').size().reset_index(name='sellers')
+    state_sell = state_sell.nlargest(10, 'sellers')
     
     fig = go.Figure(go.Bar(
-        x=seller_state['state'],
-        y=seller_state['sellers'],
-        marker=dict(
-            color=seller_state['sellers'],
-            colorscale=[[0, '#3f3f46'], [0.5, '#22c55e'], [1, '#4ade80']],
-            line=dict(width=0)
-        ),
-        hovertemplate='%{x}<br>Sellers: %{y:,}<extra></extra>'
+        x=state_sell['state'], y=state_sell['sellers'],
+        marker=dict(color=state_sell['sellers'], colorscale=[[0, '#22c55e'], [1, '#86efac']]),
+        text=state_sell['sellers'], textposition='outside',
+        textfont=dict(color='#86efac')
     ))
     
     fig.update_layout(
-        title=dict(text='Sellers by State', font=dict(size=14, color='#fafafa'), x=0),
-        height=280,
-        margin=dict(l=0, r=0, t=40, b=10),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(showgrid=False, tickfont=dict(color='#a1a1aa', size=11)),
-        yaxis=dict(showgrid=True, gridcolor='rgba(63,63,70,0.3)', tickfont=dict(color='#71717a', size=10)),
-        bargap=0.3
+        title=dict(text='Sellers by State', font=dict(color='#f0f0f5', size=14)),
+        height=320, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(tickfont=dict(color='#f0f0f5')),
+        yaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#9898a6')),
+        margin=dict(t=50, b=20)
     )
     
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, use_container_width=True)
 
 
-# Data Tables
-st.markdown("""
-<div class="section-header">
-    <div class="section-icon">📋</div>
-    <span class="section-title">Data Explorer</span>
-</div>
-""", unsafe_allow_html=True)
+# Data Explorer
+st.markdown('<div class="section-title"><div class="section-icon">📋</div>Data Explorer</div>', unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["Top Products", "Top Customers", "Top Sellers"])
+tab1, tab2, tab3 = st.tabs(["🏆 Top Products", "👥 Top Customers", "🏪 Top Sellers"])
 
 with tab1:
-    products = dim_products.nlargest(10, 'total_revenue')[['product_id', 'product_category_name', 'times_sold', 'total_revenue', 'sales_tier']].copy()
-    products['total_revenue'] = products['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
-    st.dataframe(products, use_container_width=True, hide_index=True)
+    prods = dim_products.nlargest(12, 'total_revenue')[['product_id', 'product_category_name', 'times_sold', 'total_revenue', 'sales_tier']].copy()
+    prods['total_revenue'] = prods['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
+    st.dataframe(prods, use_container_width=True, hide_index=True)
 
 with tab2:
-    customers = dim_customers.nlargest(10, 'lifetime_value')[['customer_unique_id', 'city', 'state', 'total_orders', 'lifetime_value', 'customer_type']].copy()
-    customers['lifetime_value'] = customers['lifetime_value'].apply(lambda x: f"R$ {x:,.2f}")
-    st.dataframe(customers, use_container_width=True, hide_index=True)
+    custs = dim_customers.nlargest(12, 'lifetime_value')[['customer_unique_id', 'city', 'state', 'total_orders', 'lifetime_value', 'customer_type']].copy()
+    custs['lifetime_value'] = custs['lifetime_value'].apply(lambda x: f"R$ {x:,.2f}")
+    st.dataframe(custs, use_container_width=True, hide_index=True)
 
 with tab3:
-    sellers = dim_sellers.nlargest(10, 'total_revenue')[['seller_id', 'state', 'total_orders', 'total_revenue', 'avg_review_score', 'seller_tier']].copy()
-    sellers['total_revenue'] = sellers['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
-    sellers['avg_review_score'] = sellers['avg_review_score'].apply(lambda x: f"{x:.1f} ⭐")
-    st.dataframe(sellers, use_container_width=True, hide_index=True)
+    sells = dim_sellers.nlargest(12, 'total_revenue')[['seller_id', 'state', 'total_orders', 'total_revenue', 'avg_review_score', 'seller_tier']].copy()
+    sells['total_revenue'] = sells['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
+    sells['avg_review_score'] = sells['avg_review_score'].apply(lambda x: f"{x:.1f} ⭐")
+    st.dataframe(sells, use_container_width=True, hide_index=True)
 
 
 # Footer
 st.markdown("""
-<div class="footer-container">
-    <div class="footer-brand">Olist E-commerce Analytics</div>
-    <div class="footer-tagline">Modern Data Stack • Real-time Analytics • Enterprise Grade</div>
-    <div class="footer-tech-stack">
+<div class="footer">
+    <div class="footer-title">Olist E-commerce Analytics Platform</div>
+    <p class="footer-sub">Transforming raw data into actionable insights</p>
+    <div class="tech-stack">
         <span class="tech-badge">🦆 MotherDuck</span>
         <span class="tech-badge">📊 dbt Core</span>
         <span class="tech-badge">🐍 Python</span>
         <span class="tech-badge">🎨 Streamlit</span>
         <span class="tech-badge">📈 Plotly</span>
     </div>
-    <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="footer-link">
-        View on GitHub →
+    <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="github-btn">
+        📂 View on GitHub
     </a>
 </div>
 """, unsafe_allow_html=True)
