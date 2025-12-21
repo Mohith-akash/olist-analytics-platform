@@ -4,12 +4,12 @@
 
 ### End-to-end data pipeline with dbt, MotherDuck & Streamlit
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://olist-analytics.streamlit.app/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://olist-analytics-platform.streamlit.app/)
 [![dbt](https://img.shields.io/badge/dbt-Docs-FF694B?logo=dbt&logoColor=white)](https://mohith-akash.github.io/olist-analytics-platform/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
 [![MotherDuck](https://img.shields.io/badge/MotherDuck-DuckDB-FFC107?logo=duckdb&logoColor=black)](https://motherduck.com)
 
-**[Live Dashboard](https://olist-analytics.streamlit.app/)** · **[dbt Docs](https://mohith-akash.github.io/olist-analytics-platform/)** · **[Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)**
+**[Live Dashboard](https://olist-analytics-platform.streamlit.app/)** · **[dbt Docs](https://mohith-akash.github.io/olist-analytics-platform/)** · **[Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)**
 
 </div>
 
@@ -26,24 +26,15 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 
 ---
 
-## 📊 Dashboards
+## 📊 Dashboard Preview
 
+### KPIs & Insights
+![Dashboard Hero](screenshot_hero.png)
 
-### Streamlit Web Dashboard
-Interactive web dashboard with KPIs, gauge charts, and data exploration.
-
-![Streamlit Dashboard](streamlit_dashboard.png)
-
-**Features:**
-- 6 KPI cards with key metrics
-- Seller rating gauge chart
-- Revenue trends & category breakdown
-- SQL code showcase
-- CSV data export
+### Charts & Analytics
+![Dashboard Charts](screenshot_charts.png)
 
 ### Power BI Desktop
-Local analytics dashboard for deeper exploration.
-
 ![Power BI Dashboard](dashboard_preview.png)
 
 ---
@@ -109,7 +100,6 @@ olist_analytics_platform/
 ├── 📊 streamlit_app.py              # Web dashboard
 ├── 📥 ingest.py                     # Data loader
 ├── 📈 OLIST E-commerce Dashboard.pbix
-├── 🖼️ dashboard_preview.png
 ├── 📋 requirements.txt
 │
 ├── 📂 data/                         # Raw CSVs
