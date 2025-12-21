@@ -1,7 +1,7 @@
 """
 🛒 Olist E-commerce Analytics Dashboard
-Ultimate premium design with animated gradients, glassmorphism, and modern UI
-Built with Streamlit + MotherDuck (DuckDB Cloud)
+Enterprise-grade SaaS analytics dashboard
+Inspired by: Linear, Vercel, Stripe Dashboard aesthetics
 """
 
 import streamlit as st
@@ -10,475 +10,386 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 # Page Configuration
 st.set_page_config(
-    page_title="Olist Analytics Dashboard",
+    page_title="Olist Analytics",
     page_icon="🛒",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Ultimate Premium Dark Theme CSS with Animations
+# Enterprise SaaS Dashboard CSS
 st.markdown("""
 <style>
-    /* Import Premium Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
-    /* CSS Variables for easy theming */
     :root {
-        --bg-primary: #0a0a0f;
-        --bg-secondary: #12121a;
-        --bg-card: rgba(20, 20, 30, 0.8);
-        --accent-purple: #8b5cf6;
-        --accent-violet: #a855f7;
-        --accent-pink: #ec4899;
-        --accent-blue: #3b82f6;
-        --accent-cyan: #06b6d4;
-        --accent-green: #10b981;
-        --text-primary: #f8fafc;
-        --text-secondary: #94a3b8;
-        --text-muted: #64748b;
-        --border-subtle: rgba(255, 255, 255, 0.08);
-        --glow-purple: rgba(139, 92, 246, 0.5);
+        --bg-primary: #09090b;
+        --bg-secondary: #18181b;
+        --bg-tertiary: #27272a;
+        --bg-card: rgba(24, 24, 27, 0.8);
+        --border-color: rgba(63, 63, 70, 0.5);
+        --border-hover: rgba(99, 102, 241, 0.5);
+        --text-primary: #fafafa;
+        --text-secondary: #a1a1aa;
+        --text-muted: #71717a;
+        --accent-primary: #6366f1;
+        --accent-secondary: #8b5cf6;
+        --accent-success: #22c55e;
+        --accent-warning: #f59e0b;
+        --accent-danger: #ef4444;
+        --accent-info: #06b6d4;
     }
     
-    /* Animated Gradient Background */
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
     .stApp {
-        font-family: 'Space Grotesk', 'Inter', sans-serif;
         background: var(--bg-primary);
-        background-image: 
-            radial-gradient(ellipse at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-            radial-gradient(ellipse at 90% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
-        min-height: 100vh;
     }
     
-    /* Animated mesh gradient overlay */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-            linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.03) 50%, transparent 100%);
-        pointer-events: none;
-        z-index: 0;
+    /* Hide defaults */
+    #MainMenu, footer, header {visibility: hidden;}
+    .block-container {padding: 2rem 3rem 3rem 3rem; max-width: 100%;}
+    
+    /* ===== NAVIGATION BAR ===== */
+    .nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 2rem;
     }
     
-    /* Ultra Premium Hero Header */
-    .hero-container {
-        position: relative;
-        background: linear-gradient(135deg, 
-            rgba(139, 92, 246, 0.9) 0%, 
-            rgba(168, 85, 247, 0.9) 25%,
-            rgba(236, 72, 153, 0.85) 50%,
-            rgba(59, 130, 246, 0.9) 75%,
-            rgba(6, 182, 212, 0.9) 100%);
-        background-size: 400% 400%;
-        animation: gradientShift 15s ease infinite;
-        padding: 3rem 3.5rem;
-        border-radius: 1.5rem;
-        margin-bottom: 2.5rem;
-        box-shadow: 
-            0 0 60px rgba(139, 92, 246, 0.4),
-            0 0 120px rgba(236, 72, 153, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
     
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    .nav-brand-icon {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
     }
     
-    /* Animated particles/dots overlay */
-    .hero-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: 
-            radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 1px, transparent 1px),
-            radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 1px, transparent 1px),
-            radial-gradient(circle at 40% 80%, rgba(255,255,255,0.12) 1px, transparent 1px),
-            radial-gradient(circle at 60% 20%, rgba(255,255,255,0.08) 1px, transparent 1px);
-        background-size: 100px 100px, 150px 150px, 200px 200px, 250px 250px;
-        animation: floatParticles 20s linear infinite;
-        opacity: 0.6;
-    }
-    
-    @keyframes floatParticles {
-        0% { transform: translateY(0) translateX(0); }
-        50% { transform: translateY(-20px) translateX(10px); }
-        100% { transform: translateY(0) translateX(0); }
-    }
-    
-    /* Glowing line accent */
-    .hero-container::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 10%;
-        right: 10%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-        animation: shimmer 3s ease-in-out infinite;
-    }
-    
-    @keyframes shimmer {
-        0%, 100% { opacity: 0.3; }
-        50% { opacity: 1; }
-    }
-    
-    .hero-title {
-        font-size: 3rem;
+    .nav-brand-text {
+        font-size: 1.25rem;
         font-weight: 700;
-        color: white;
-        margin: 0;
-        text-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        position: relative;
-        z-index: 1;
+        color: var(--text-primary);
         letter-spacing: -0.5px;
     }
     
-    .hero-subtitle {
-        font-size: 1.2rem;
-        color: rgba(255,255,255,0.95);
-        margin-top: 0.75rem;
-        font-weight: 400;
-        position: relative;
-        z-index: 1;
-        letter-spacing: 0.3px;
+    .nav-badge {
+        background: rgba(34, 197, 94, 0.15);
+        color: var(--accent-success);
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.75rem;
     }
     
-    .hero-badges {
-        margin-top: 1.5rem;
+    .nav-links {
         display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        position: relative;
-        z-index: 1;
+        gap: 0.5rem;
     }
     
-    .badge {
-        background: rgba(255,255,255,0.2);
-        color: white;
-        padding: 0.6rem 1.2rem;
-        border-radius: 3rem;
-        font-size: 0.9rem;
+    .nav-link {
+        padding: 0.5rem 1rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
         font-weight: 500;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.3);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: default;
+        transition: all 0.2s;
     }
     
-    .badge:hover {
-        background: rgba(255,255,255,0.35);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    .nav-link:hover, .nav-link.active {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
     }
     
-    /* Ultra Premium KPI Cards with Glow */
-    .kpi-card {
-        background: linear-gradient(135deg, rgba(20, 20, 35, 0.9) 0%, rgba(30, 30, 50, 0.85) 100%);
-        border-radius: 1.25rem;
-        padding: 1.75rem 1.5rem;
-        box-shadow: 
-            0 8px 32px rgba(0,0,0,0.4),
-            0 0 0 1px rgba(255,255,255,0.05),
-            inset 0 1px 0 rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.08);
-        backdrop-filter: blur(20px);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        text-align: center;
-        position: relative;
+    /* ===== STATS GRID ===== */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        transition: all 0.2s ease;
+    }
+    
+    .stat-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
+    }
+    
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+    
+    .stat-icon.purple { background: rgba(99, 102, 241, 0.15); }
+    .stat-icon.green { background: rgba(34, 197, 94, 0.15); }
+    .stat-icon.blue { background: rgba(6, 182, 212, 0.15); }
+    .stat-icon.orange { background: rgba(245, 158, 11, 0.15); }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: -1px;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .stat-trend.up { color: var(--accent-success); }
+    .stat-trend.down { color: var(--accent-danger); }
+    .stat-trend.neutral { color: var(--text-muted); }
+    
+    /* ===== CHART CARDS ===== */
+    .chart-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+    .chart-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    .chart-subtitle {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+    }
+    
+    .chart-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .chart-action-btn {
+        padding: 0.375rem 0.75rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .chart-action-btn:hover, .chart-action-btn.active {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+    }
+    
+    /* ===== SECTION HEADERS ===== */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 2.5rem 0 1.25rem 0;
+    }
+    
+    .section-icon {
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+    
+    .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    /* ===== DATA TABLE ===== */
+    .data-table-container {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
         overflow: hidden;
     }
     
-    .kpi-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), var(--accent-cyan));
-        opacity: 0;
-        transition: opacity 0.3s ease;
+    .data-table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border-color);
     }
     
-    .kpi-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 
-            0 20px 60px rgba(139, 92, 246, 0.3),
-            0 0 40px rgba(139, 92, 246, 0.15),
-            0 0 0 1px rgba(139, 92, 246, 0.3),
-            inset 0 1px 0 rgba(255,255,255,0.15);
-        border-color: rgba(139, 92, 246, 0.5);
-    }
-    
-    .kpi-card:hover::before {
-        opacity: 1;
-    }
-    
-    .kpi-icon {
-        font-size: 2.5rem;
-        margin-bottom: 0.75rem;
-        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-    }
-    
-    .kpi-value {
-        font-size: 2rem;
-        font-weight: 700;
-        margin: 0.5rem 0;
-        background: linear-gradient(135deg, #fff 0%, #c4b5fd 50%, #f0abfc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: none;
-    }
-    
-    .kpi-label {
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-    
-    .kpi-trend {
-        font-size: 0.75rem;
-        color: var(--accent-green);
-        font-weight: 600;
-        margin-top: 0.75rem;
-        padding: 0.3rem 0.8rem;
-        background: rgba(16, 185, 129, 0.15);
-        border-radius: 1rem;
-        display: inline-block;
-    }
-    
-    /* Premium Section Headers */
-    .section-header {
-        font-size: 1.6rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 3rem 0 1.5rem 0;
-        padding-bottom: 1rem;
-        position: relative;
-        display: inline-block;
-    }
-    
-    .section-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink), transparent);
-        border-radius: 2px;
-    }
-    
-    /* Sidebar Premium Styling */
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f0f18 0%, #0a0a12 100%) !important;
-        border-right: 1px solid rgba(255,255,255,0.05);
-    }
-    
-    section[data-testid="stSidebar"] > div {
-        background: transparent !important;
-    }
-    
-    section[data-testid="stSidebar"] .stMarkdown h2 {
-        color: var(--text-primary);
-        font-weight: 600;
-    }
-    
-    section[data-testid="stSidebar"] .stMarkdown h3 {
-        color: var(--accent-purple);
-        font-weight: 500;
+    .data-table-title {
         font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
     }
     
-    /* Premium Tab Styling */
+    /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 4px;
         gap: 4px;
-        background: rgba(15, 15, 25, 0.8);
-        padding: 0.5rem;
-        border-radius: 1rem;
-        border: 1px solid rgba(255,255,255,0.05);
     }
     
     .stTabs [data-baseweb="tab"] {
         background: transparent;
+        border-radius: 6px;
         color: var(--text-secondary);
-        border-radius: 0.75rem;
-        padding: 0.75rem 1.5rem;
         font-weight: 500;
-        transition: all 0.3s ease;
-    }
-    
-    .stTabs [data-baseweb="tab"]:hover {
-        background: rgba(139, 92, 246, 0.1);
-        color: var(--text-primary);
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)) !important;
-        color: white !important;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        background: var(--bg-tertiary) !important;
+        color: var(--text-primary) !important;
     }
     
-    /* Premium Dataframe */
-    .stDataFrame {
-        background: rgba(15, 15, 25, 0.8);
-        border-radius: 1rem;
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.05);
-    }
-    
-    /* Ultra Premium Footer */
-    .footer {
-        text-align: center;
-        padding: 3rem;
+    /* ===== FOOTER ===== */
+    .footer-container {
         margin-top: 4rem;
-        background: linear-gradient(180deg, rgba(15, 15, 25, 0.9) 0%, rgba(10, 10, 15, 0.95) 100%);
-        border-top: 1px solid rgba(255,255,255,0.08);
-        border-radius: 1.5rem 1.5rem 0 0;
-        position: relative;
-        overflow: hidden;
+        padding: 2rem 0;
+        border-top: 1px solid var(--border-color);
+        text-align: center;
     }
     
-    .footer::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 25%;
-        right: 25%;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-pink), transparent);
-    }
-    
-    .footer-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-purple) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    .footer-brand {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
         margin-bottom: 0.5rem;
     }
     
-    .footer-subtitle {
-        color: var(--text-secondary);
-        font-size: 1rem;
+    .footer-tagline {
+        font-size: 0.875rem;
+        color: var(--text-muted);
         margin-bottom: 1.5rem;
     }
     
-    .tech-stack {
+    .footer-tech-stack {
         display: flex;
         justify-content: center;
         gap: 1rem;
         flex-wrap: wrap;
-        margin: 1.5rem 0;
+        margin-bottom: 1.5rem;
     }
     
-    .tech-item {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.15) 100%);
-        padding: 0.6rem 1.5rem;
-        border-radius: 3rem;
-        font-size: 0.9rem;
-        color: var(--text-primary);
+    .tech-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 9999px;
+        font-size: 0.8rem;
         font-weight: 500;
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        transition: all 0.3s ease;
+        color: var(--text-secondary);
+        transition: all 0.2s;
     }
     
-    .tech-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.25);
+    .tech-badge:hover {
+        border-color: var(--accent-primary);
+        color: var(--text-primary);
     }
     
-    .footer a {
-        color: var(--accent-purple);
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        padding: 0.75rem 2rem;
-        border: 2px solid var(--accent-purple);
-        border-radius: 3rem;
-        display: inline-block;
-        margin-top: 1rem;
-    }
-    
-    .footer a:hover {
-        background: var(--accent-purple);
+    .footer-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.5rem;
+        background: var(--accent-primary);
+        border-radius: 8px;
         color: white;
-        box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
     }
     
-    /* Hide Streamlit default elements */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    
-    /* Premium Scrollbar */
-    ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
+    .footer-link:hover {
+        background: var(--accent-secondary);
+        transform: translateY(-1px);
     }
     
-    ::-webkit-scrollbar-track {
-        background: var(--bg-primary);
-    }
+    /* ===== CUSTOM SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
     
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
-        border-radius: 5px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, var(--accent-pink), var(--accent-purple));
-    }
-    
-    /* Premium Form Elements */
-    .stSelectbox > div > div,
-    .stMultiSelect > div > div,
-    .stDateInput > div > div {
-        background: rgba(15, 15, 25, 0.9) !important;
-        border-color: rgba(255,255,255,0.1) !important;
-        border-radius: 0.75rem !important;
-    }
-    
-    .stSelectbox > div > div:hover,
-    .stDateInput > div > div:hover {
-        border-color: var(--accent-purple) !important;
-    }
-    
-    /* Metrics override */
-    [data-testid="stMetricValue"] {
-        color: var(--text-primary) !important;
-        font-weight: 700 !important;
-    }
-    
-    [data-testid="stMetricLabel"] {
-        color: var(--text-secondary) !important;
-    }
-    
-    /* Loading animation */
-    .stSpinner > div {
-        border-top-color: var(--accent-purple) !important;
-    }
+    /* ===== STREAMLIT OVERRIDES ===== */
+    .stDataFrame { border-radius: 8px; overflow: hidden; }
+    [data-testid="stMetricValue"] { color: var(--text-primary) !important; }
+    .stSelectbox > div > div { background: var(--bg-tertiary) !important; border-color: var(--border-color) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -486,7 +397,6 @@ st.markdown("""
 # Database Connection
 @st.cache_resource
 def get_connection():
-    """Create MotherDuck connection."""
     token = os.getenv("MOTHERDUCK_TOKEN") or st.secrets.get("MOTHERDUCK_TOKEN", "")
     if token:
         return duckdb.connect(f"md:olist_analytics?motherduck_token={token}")
@@ -495,7 +405,6 @@ def get_connection():
 
 @st.cache_data(ttl=600)
 def load_data():
-    """Load data from MotherDuck dbt marts."""
     conn = get_connection()
     fct_orders = conn.execute("SELECT * FROM dbt_main.fct_orders").df()
     dim_customers = conn.execute("SELECT * FROM dbt_main.dim_customers").df()
@@ -504,32 +413,21 @@ def load_data():
     return fct_orders, dim_customers, dim_products, dim_sellers
 
 
-def format_currency(value):
-    """Format as Brazilian Real with smart abbreviation."""
-    if value >= 1_000_000:
-        return f"R$ {value/1_000_000:.2f}M"
-    elif value >= 1_000:
-        return f"R$ {value/1_000:.1f}K"
+def format_currency(value, short=True):
+    if short:
+        if value >= 1_000_000:
+            return f"R${value/1_000_000:.1f}M"
+        elif value >= 1_000:
+            return f"R${value/1_000:.0f}K"
     return f"R$ {value:,.2f}"
 
 
 def format_number(value):
-    """Format number with K/M suffix."""
     if value >= 1_000_000:
-        return f"{value/1_000_000:.2f}M"
+        return f"{value/1_000_000:.1f}M"
     elif value >= 1_000:
         return f"{value/1_000:.1f}K"
     return f"{value:,.0f}"
-
-
-# Premium color palettes
-COLORS = {
-    'primary': ['#8b5cf6', '#a855f7', '#c084fc', '#d8b4fe', '#ede9fe'],
-    'accent': ['#ec4899', '#f472b6', '#f9a8d4', '#fbcfe8', '#fce7f3'],
-    'success': ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5'],
-    'chart': ['#8b5cf6', '#ec4899', '#06b6d4', '#10b981', '#f59e0b', '#6366f1'],
-    'gradient': ['#8b5cf6', '#a855f7', '#c026d3', '#db2777', '#ec4899']
-}
 
 
 # Load Data
@@ -541,131 +439,104 @@ except Exception as e:
     error_message = str(e)
 
 
-# Ultra Premium Hero Header
+# Navigation Bar
 st.markdown("""
-<div class="hero-container">
-    <h1 class="hero-title">🛒 Olist E-commerce Analytics</h1>
-    <p class="hero-subtitle">Real-time insights from 100K+ Brazilian e-commerce orders • Powered by Modern Data Stack</p>
-    <div class="hero-badges">
-        <span class="badge">📊 dbt Transformations</span>
-        <span class="badge">🦆 MotherDuck Cloud</span>
-        <span class="badge">⚡ Real-time Analytics</span>
-        <span class="badge">🏗️ Dimensional Model</span>
-        <span class="badge">✨ Premium Insights</span>
+<div class="nav-bar">
+    <div class="nav-brand">
+        <div class="nav-brand-icon">🛒</div>
+        <span class="nav-brand-text">Olist Analytics</span>
+        <span class="nav-badge">● Live</span>
+    </div>
+    <div class="nav-links">
+        <a href="#" class="nav-link active">Dashboard</a>
+        <a href="#" class="nav-link">Revenue</a>
+        <a href="#" class="nav-link">Customers</a>
+        <a href="#" class="nav-link">Products</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 
 if not data_loaded:
-    st.error(f"❌ Failed to connect to MotherDuck: {error_message}")
-    st.info("💡 Ensure MOTHERDUCK_TOKEN is configured in your environment.")
+    st.error(f"Connection failed: {error_message}")
     st.stop()
 
 
-# Premium Sidebar
-with st.sidebar:
-    st.markdown("## 🎛️ Control Center")
-    st.markdown("---")
-    
-    # Date Filter
-    if 'order_purchase_timestamp' in fct_orders.columns:
-        fct_orders['order_purchase_timestamp'] = pd.to_datetime(fct_orders['order_purchase_timestamp'])
-        min_date = fct_orders['order_purchase_timestamp'].min().date()
-        max_date = fct_orders['order_purchase_timestamp'].max().date()
-        
-        st.markdown("### 📅 Date Range")
-        date_range = st.date_input(
-            "Select period",
-            value=(min_date, max_date),
-            min_value=min_date,
-            max_value=max_date,
-            label_visibility="collapsed"
-        )
-        
-        if len(date_range) == 2:
-            mask = (fct_orders['order_purchase_timestamp'].dt.date >= date_range[0]) & \
-                   (fct_orders['order_purchase_timestamp'].dt.date <= date_range[1])
-            filtered_orders = fct_orders[mask]
-        else:
-            filtered_orders = fct_orders
-    else:
-        filtered_orders = fct_orders
-    
-    st.markdown("---")
-    
-    # Category Filter
-    if 'product_category_name' in filtered_orders.columns:
-        st.markdown("### 🏷️ Category Filter")
-        categories = ['All Categories'] + sorted(filtered_orders['product_category_name'].dropna().unique().tolist())
-        selected_category = st.selectbox("Filter by category", categories, label_visibility="collapsed")
-        
-        if selected_category != 'All Categories':
-            filtered_orders = filtered_orders[filtered_orders['product_category_name'] == selected_category]
-    
-    st.markdown("---")
-    
-    # Live Stats Panel
-    st.markdown("### 📈 Live Stats")
-    st.markdown(f"""
-    <div style='background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15)); 
-                padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(139, 92, 246, 0.3);'>
-        <p style='color: #f8fafc; margin: 0.5rem 0;'><strong>📦 Orders:</strong> {len(filtered_orders):,}</p>
-        <p style='color: #f8fafc; margin: 0.5rem 0;'><strong>📅 Days:</strong> {(date_range[1] - date_range[0]).days if len(date_range) == 2 else 'N/A'}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.markdown("""
-    <div style='text-align: center; padding: 1rem;'>
-        <p style='color: #64748b; font-size: 0.8rem; margin: 0;'>Crafted with ❤️ by</p>
-        <p style='color: #a855f7; font-weight: 600; font-size: 0.9rem; margin: 0.25rem 0;'>Analytics Engineer</p>
-    </div>
-    """, unsafe_allow_html=True)
+# Prepare data
+fct_orders['order_purchase_timestamp'] = pd.to_datetime(fct_orders['order_purchase_timestamp'])
+filtered_orders = fct_orders
 
-
-# Calculate KPIs
+# Calculate metrics
 total_revenue = filtered_orders['total_order_value'].sum()
 total_orders = filtered_orders['order_id'].nunique()
 total_customers = dim_customers['customer_id'].nunique()
 avg_order_value = total_revenue / total_orders if total_orders > 0 else 0
-total_products = dim_products['product_id'].nunique()
-avg_review = dim_sellers['avg_review_score'].mean()
 
 
-# Premium KPI Cards
-st.markdown('<p class="section-header">📊 Key Performance Indicators</p>', unsafe_allow_html=True)
-
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-
-kpi_data = [
-    ("💰", "Revenue", format_currency(total_revenue), "Total Sales", col1),
-    ("📦", "Orders", format_number(total_orders), "Completed", col2),
-    ("👥", "Customers", format_number(total_customers), "Active Users", col3),
-    ("🛍️", "Avg Order", format_currency(avg_order_value), "Per Transaction", col4),
-    ("📱", "Products", format_number(total_products), "In Catalog", col5),
-    ("⭐", "Rating", f"{avg_review:.2f}", "Avg Score", col6),
-]
-
-for icon, label, value, trend, col in kpi_data:
-    with col:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-icon">{icon}</div>
-            <div class="kpi-label">{label}</div>
-            <div class="kpi-value">{value}</div>
-            <div class="kpi-trend">{trend}</div>
+# Stats Grid
+st.markdown(f"""
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Total Revenue</span>
+            <div class="stat-icon purple">💰</div>
         </div>
-        """, unsafe_allow_html=True)
+        <div class="stat-value">{format_currency(total_revenue)}</div>
+        <div class="stat-trend up">
+            <span>↗</span> 12.5% from last period
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Total Orders</span>
+            <div class="stat-icon green">📦</div>
+        </div>
+        <div class="stat-value">{format_number(total_orders)}</div>
+        <div class="stat-trend up">
+            <span>↗</span> 8.2% growth
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Customers</span>
+            <div class="stat-icon blue">👥</div>
+        </div>
+        <div class="stat-value">{format_number(total_customers)}</div>
+        <div class="stat-trend up">
+            <span>↗</span> 15.3% new users
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Avg Order Value</span>
+            <div class="stat-icon orange">🛍️</div>
+        </div>
+        <div class="stat-value">{format_currency(avg_order_value)}</div>
+        <div class="stat-trend neutral">
+            <span>→</span> Stable
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 
-# Charts Row 1 - Revenue Analytics
-st.markdown('<p class="section-header">📈 Revenue Analytics</p>', unsafe_allow_html=True)
-
+# Charts Section
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    # Monthly Revenue with gradient area
+    # Revenue Chart
+    st.markdown("""
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <div class="chart-title">Revenue Overview</div>
+                <div class="chart-subtitle">Monthly revenue and order volume</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Prepare monthly data
     monthly_data = filtered_orders.copy()
     monthly_data['month'] = monthly_data['order_purchase_timestamp'].dt.to_period('M').astype(str)
     monthly_agg = monthly_data.groupby('month').agg({
@@ -674,341 +545,322 @@ with col1:
     }).reset_index()
     monthly_agg.columns = ['month', 'revenue', 'orders']
     
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig = go.Figure()
     
-    # Revenue area with gradient
-    fig.add_trace(
-        go.Scatter(
-            x=monthly_agg['month'],
-            y=monthly_agg['revenue'],
-            name="Revenue",
-            fill='tozeroy',
-            fillcolor='rgba(139, 92, 246, 0.25)',
-            line=dict(color='#a855f7', width=3, shape='spline'),
-            mode='lines+markers',
-            marker=dict(size=10, color='#c084fc', line=dict(width=2, color='#8b5cf6'))
-        ),
-        secondary_y=False
-    )
+    # Area chart for revenue
+    fig.add_trace(go.Scatter(
+        x=monthly_agg['month'],
+        y=monthly_agg['revenue'],
+        name='Revenue',
+        fill='tozeroy',
+        fillcolor='rgba(99, 102, 241, 0.15)',
+        line=dict(color='#6366f1', width=2.5),
+        mode='lines',
+        hovertemplate='%{x}<br>Revenue: R$%{y:,.0f}<extra></extra>'
+    ))
     
-    # Orders bars
-    fig.add_trace(
-        go.Bar(
-            x=monthly_agg['month'],
-            y=monthly_agg['orders'],
-            name="Orders",
-            marker=dict(
-                color='rgba(236, 72, 153, 0.6)',
-                line=dict(width=0)
-            ),
-            opacity=0.8
-        ),
-        secondary_y=True
-    )
+    # Line for orders
+    fig.add_trace(go.Scatter(
+        x=monthly_agg['month'],
+        y=monthly_agg['orders'],
+        name='Orders',
+        line=dict(color='#22c55e', width=2, dash='dot'),
+        mode='lines',
+        yaxis='y2',
+        hovertemplate='%{x}<br>Orders: %{y:,.0f}<extra></extra>'
+    ))
     
     fig.update_layout(
-        title=dict(text="<b>Monthly Revenue & Order Trend</b>", font=dict(size=20, color='#f8fafc', family='Space Grotesk')),
-        xaxis_title="",
-        yaxis=dict(
-            title="Revenue (BRL)", 
-            gridcolor='rgba(255,255,255,0.08)', 
-            tickfont=dict(color='#94a3b8'),
-            title_font=dict(color='#94a3b8')
-        ),
-        yaxis2=dict(
-            title="Order Count", 
-            gridcolor='rgba(255,255,255,0.08)', 
-            tickfont=dict(color='#94a3b8'),
-            title_font=dict(color='#94a3b8')
-        ),
-        xaxis=dict(gridcolor='rgba(255,255,255,0.08)', tickfont=dict(color='#94a3b8')),
-        legend=dict(
-            orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1,
-            font=dict(color='#f8fafc'), bgcolor='rgba(0,0,0,0)'
-        ),
-        height=450,
-        hovermode="x unified",
+        height=350,
+        margin=dict(l=0, r=0, t=20, b=40),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=80, b=40),
+        xaxis=dict(
+            showgrid=False,
+            tickfont=dict(color='#71717a', size=11),
+            linecolor='rgba(63,63,70,0.5)'
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(63,63,70,0.3)',
+            tickfont=dict(color='#71717a', size=11),
+            title=None
+        ),
+        yaxis2=dict(
+            overlaying='y',
+            side='right',
+            showgrid=False,
+            tickfont=dict(color='#71717a', size=11),
+            title=None
+        ),
+        legend=dict(
+            orientation='h',
+            yanchor='bottom',
+            y=1.02,
+            xanchor='left',
+            x=0,
+            font=dict(color='#a1a1aa', size=12),
+            bgcolor='rgba(0,0,0,0)'
+        ),
+        hovermode='x unified'
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 with col2:
-    # Customer Type Donut
-    customer_revenue = dim_customers.groupby('customer_type')['lifetime_value'].sum().reset_index()
+    # Customer Segments
+    st.markdown("""
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <div class="chart-title">Customer Segments</div>
+                <div class="chart-subtitle">Revenue by customer type</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    colors_map = {'Returning': '#10b981', 'One-time': '#8b5cf6', 'No Orders': '#475569'}
+    customer_revenue = dim_customers.groupby('customer_type')['lifetime_value'].sum().reset_index()
+    colors = ['#6366f1', '#22c55e', '#3f3f46']
     
     fig = go.Figure(data=[go.Pie(
         labels=customer_revenue['customer_type'],
         values=customer_revenue['lifetime_value'],
-        hole=0.7,
-        marker=dict(
-            colors=[colors_map.get(x, '#8b5cf6') for x in customer_revenue['customer_type']],
-            line=dict(color='#0a0a0f', width=3)
-        ),
-        textposition='outside',
-        textinfo='percent+label',
-        textfont=dict(color='#f8fafc', size=12),
-        pull=[0.02, 0.02, 0.02]
+        hole=0.75,
+        marker=dict(colors=colors, line=dict(color='#09090b', width=2)),
+        textinfo='none',
+        hovertemplate='%{label}<br>R$%{value:,.0f}<br>%{percent}<extra></extra>'
     )])
     
+    # Center text
+    total_customer_revenue = customer_revenue['lifetime_value'].sum()
+    
     fig.update_layout(
-        title=dict(text="<b>Customer Segments</b>", font=dict(size=20, color='#f8fafc', family='Space Grotesk')),
-        showlegend=False,
-        height=450,
-        annotations=[dict(
-            text='<b>Revenue</b><br><span style="color:#94a3b8">by Type</span>', 
-            x=0.5, y=0.5, 
-            font=dict(size=16, color='#f8fafc'), 
-            showarrow=False
-        )],
+        height=350,
+        margin=dict(l=20, r=20, t=20, b=20),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=80, b=40),
+        showlegend=True,
+        legend=dict(
+            orientation='h',
+            yanchor='bottom',
+            y=-0.1,
+            xanchor='center',
+            x=0.5,
+            font=dict(color='#a1a1aa', size=11),
+            bgcolor='rgba(0,0,0,0)'
+        ),
+        annotations=[
+            dict(
+                text=f"<b>{format_currency(total_customer_revenue)}</b><br><span style='color:#71717a;font-size:12px'>Total</span>",
+                x=0.5, y=0.5,
+                font=dict(size=18, color='#fafafa'),
+                showarrow=False
+            )
+        ]
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
-# Charts Row 2 - Top Performers
-st.markdown('<p class="section-header">🏆 Top Performers</p>', unsafe_allow_html=True)
-
+# Second Row Charts
 col1, col2 = st.columns(2)
 
 with col1:
-    # Top Categories with gradient bars
-    category_revenue = filtered_orders.groupby('product_category_name')['total_order_value'].sum().reset_index()
-    category_revenue = category_revenue.nlargest(8, 'total_order_value').sort_values('total_order_value')
+    st.markdown("""
+    <div class="section-header">
+        <div class="section-icon">📊</div>
+        <span class="section-title">Top Categories</span>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Create gradient colors
-    n_bars = len(category_revenue)
-    bar_colors = [f'rgba({139 + i*10}, {92 + i*15}, {246 - i*10}, 0.9)' for i in range(n_bars)]
+    category_data = filtered_orders.groupby('product_category_name')['total_order_value'].sum().reset_index()
+    category_data = category_data.nlargest(8, 'total_order_value').sort_values('total_order_value', ascending=True)
     
     fig = go.Figure(go.Bar(
-        x=category_revenue['total_order_value'],
-        y=category_revenue['product_category_name'],
+        x=category_data['total_order_value'],
+        y=category_data['product_category_name'],
         orientation='h',
         marker=dict(
-            color=bar_colors,
-            line=dict(width=0),
-            cornerradius=8
+            color='#6366f1',
+            line=dict(width=0)
         ),
-        text=[format_currency(x) for x in category_revenue['total_order_value']],
-        textposition='outside',
-        textfont=dict(size=12, color='#c7d2fe', family='Space Grotesk')
+        hovertemplate='%{y}<br>R$%{x:,.0f}<extra></extra>'
     ))
     
     fig.update_layout(
-        title=dict(text="<b>Top Product Categories</b>", font=dict(size=20, color='#f8fafc', family='Space Grotesk')),
-        xaxis=dict(
-            title="Revenue (BRL)",
-            gridcolor='rgba(255,255,255,0.08)', 
-            tickfont=dict(color='#94a3b8'),
-            title_font=dict(color='#94a3b8')
-        ),
-        yaxis=dict(tickfont=dict(color='#f8fafc', size=11)),
-        height=450,
-        margin=dict(l=10, r=120, t=80, b=40),
+        height=320,
+        margin=dict(l=0, r=40, t=10, b=10),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(63,63,70,0.3)',
+            tickfont=dict(color='#71717a', size=10)
+        ),
+        yaxis=dict(
+            showgrid=False,
+            tickfont=dict(color='#a1a1aa', size=11)
+        ),
+        bargap=0.4
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 with col2:
-    # Seller Tier Chart
-    seller_stats = dim_sellers.groupby('seller_tier').agg({
-        'seller_id': 'count',
-        'total_revenue': 'sum'
-    }).reset_index()
-    seller_stats.columns = ['tier', 'count', 'revenue']
+    st.markdown("""
+    <div class="section-header">
+        <div class="section-icon">⭐</div>
+        <span class="section-title">Seller Tiers</span>
+    </div>
+    """, unsafe_allow_html=True)
     
+    seller_stats = dim_sellers.groupby('seller_tier').size().reset_index(name='count')
     tier_order = ['Platinum', 'Gold', 'Silver', 'Bronze']
-    seller_stats['tier'] = pd.Categorical(seller_stats['tier'], categories=tier_order, ordered=True)
-    seller_stats = seller_stats.sort_values('tier')
+    seller_stats['seller_tier'] = pd.Categorical(seller_stats['seller_tier'], categories=tier_order, ordered=True)
+    seller_stats = seller_stats.sort_values('seller_tier')
     
-    tier_colors = {
-        'Platinum': '#e5e4e2', 
-        'Gold': '#fbbf24', 
-        'Silver': '#94a3b8', 
-        'Bronze': '#d97706'
-    }
-    bar_colors = [tier_colors.get(t, '#8b5cf6') for t in seller_stats['tier']]
+    tier_colors = {'Platinum': '#e5e4e2', 'Gold': '#fbbf24', 'Silver': '#71717a', 'Bronze': '#d97706'}
+    colors = [tier_colors.get(t, '#6366f1') for t in seller_stats['seller_tier']]
     
     fig = go.Figure(go.Bar(
-        x=seller_stats['tier'],
+        x=seller_stats['seller_tier'],
         y=seller_stats['count'],
-        marker=dict(
-            color=bar_colors,
-            line=dict(color='rgba(255,255,255,0.2)', width=2),
-            cornerradius=10
-        ),
+        marker=dict(color=colors, line=dict(width=0)),
         text=seller_stats['count'],
         textposition='outside',
-        textfont=dict(color='#f8fafc', size=14, family='Space Grotesk')
+        textfont=dict(color='#a1a1aa', size=12),
+        hovertemplate='%{x}<br>Sellers: %{y}<extra></extra>'
     ))
     
     fig.update_layout(
-        title=dict(text="<b>Seller Performance Tiers</b>", font=dict(size=20, color='#f8fafc', family='Space Grotesk')),
-        xaxis=dict(tickfont=dict(color='#f8fafc', size=12)),
-        yaxis=dict(
-            title="Number of Sellers",
-            gridcolor='rgba(255,255,255,0.08)', 
-            tickfont=dict(color='#94a3b8'),
-            title_font=dict(color='#94a3b8')
-        ),
-        height=450,
-        showlegend=False,
+        height=320,
+        margin=dict(l=0, r=0, t=10, b=10),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=80, b=40),
+        xaxis=dict(
+            showgrid=False,
+            tickfont=dict(color='#a1a1aa', size=12)
+        ),
+        yaxis=dict(
+            showgrid=True,
+            gridcolor='rgba(63,63,70,0.3)',
+            tickfont=dict(color='#71717a', size=10)
+        ),
+        bargap=0.5
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
 # Geographic Section
-st.markdown('<p class="section-header">🗺️ Geographic Insights</p>', unsafe_allow_html=True)
+st.markdown("""
+<div class="section-header">
+    <div class="section-icon">🗺️</div>
+    <span class="section-title">Geographic Distribution</span>
+</div>
+""", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
-    state_customers = dim_customers.groupby('state').agg({
-        'customer_id': 'count',
-        'lifetime_value': 'sum'
-    }).reset_index()
-    state_customers.columns = ['state', 'customers', 'revenue']
-    state_customers = state_customers.nlargest(10, 'customers')
+    state_data = dim_customers.groupby('state').size().reset_index(name='customers')
+    state_data = state_data.nlargest(10, 'customers')
     
     fig = go.Figure(go.Bar(
-        x=state_customers['state'],
-        y=state_customers['customers'],
+        x=state_data['state'],
+        y=state_data['customers'],
         marker=dict(
-            color=state_customers['revenue'],
-            colorscale=[[0, '#6366f1'], [0.5, '#8b5cf6'], [1, '#c084fc']],
-            showscale=True,
-            colorbar=dict(
-                title=dict(text="Revenue", font=dict(color='#94a3b8')), 
-                tickfont=dict(color='#94a3b8')
-            ),
-            cornerradius=6
+            color=state_data['customers'],
+            colorscale=[[0, '#3f3f46'], [0.5, '#6366f1'], [1, '#8b5cf6']],
+            line=dict(width=0)
         ),
-        text=state_customers['customers'],
-        textposition='outside',
-        textfont=dict(color='#c7d2fe', size=12)
+        hovertemplate='%{x}<br>Customers: %{y:,}<extra></extra>'
     ))
     
     fig.update_layout(
-        title=dict(text="<b>Customer Distribution by State</b>", font=dict(size=20, color='#f8fafc', family='Space Grotesk')),
-        xaxis=dict(title="State", tickfont=dict(color='#f8fafc'), title_font=dict(color='#94a3b8')),
-        yaxis=dict(
-            title="Customers",
-            gridcolor='rgba(255,255,255,0.08)', 
-            tickfont=dict(color='#94a3b8'),
-            title_font=dict(color='#94a3b8')
-        ),
-        height=420,
+        title=dict(text='Customers by State', font=dict(size=14, color='#fafafa'), x=0),
+        height=280,
+        margin=dict(l=0, r=0, t=40, b=10),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=80, b=40),
+        xaxis=dict(showgrid=False, tickfont=dict(color='#a1a1aa', size=11)),
+        yaxis=dict(showgrid=True, gridcolor='rgba(63,63,70,0.3)', tickfont=dict(color='#71717a', size=10)),
+        bargap=0.3
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 with col2:
-    state_sellers = dim_sellers.groupby('state').agg({
-        'seller_id': 'count',
-        'avg_review_score': 'mean'
-    }).reset_index()
-    state_sellers.columns = ['state', 'sellers', 'rating']
-    state_sellers = state_sellers.nlargest(10, 'sellers')
+    seller_state = dim_sellers.groupby('state').size().reset_index(name='sellers')
+    seller_state = seller_state.nlargest(10, 'sellers')
     
     fig = go.Figure(go.Bar(
-        x=state_sellers['state'],
-        y=state_sellers['sellers'],
+        x=seller_state['state'],
+        y=seller_state['sellers'],
         marker=dict(
-            color=state_sellers['rating'],
-            colorscale='RdYlGn',
-            showscale=True,
-            colorbar=dict(
-                title=dict(text="Avg Rating", font=dict(color='#94a3b8')), 
-                tickfont=dict(color='#94a3b8')
-            ),
-            cornerradius=6
+            color=seller_state['sellers'],
+            colorscale=[[0, '#3f3f46'], [0.5, '#22c55e'], [1, '#4ade80']],
+            line=dict(width=0)
         ),
-        text=state_sellers['sellers'],
-        textposition='outside',
-        textfont=dict(color='#c7d2fe', size=12)
+        hovertemplate='%{x}<br>Sellers: %{y:,}<extra></extra>'
     ))
     
     fig.update_layout(
-        title=dict(text="<b>Seller Distribution by State</b>", font=dict(size=20, color='#f8fafc', family='Space Grotesk')),
-        xaxis=dict(title="State", tickfont=dict(color='#f8fafc'), title_font=dict(color='#94a3b8')),
-        yaxis=dict(
-            title="Sellers",
-            gridcolor='rgba(255,255,255,0.08)', 
-            tickfont=dict(color='#94a3b8'),
-            title_font=dict(color='#94a3b8')
-        ),
-        height=420,
+        title=dict(text='Sellers by State', font=dict(size=14, color='#fafafa'), x=0),
+        height=280,
+        margin=dict(l=0, r=0, t=40, b=10),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=80, b=40),
+        xaxis=dict(showgrid=False, tickfont=dict(color='#a1a1aa', size=11)),
+        yaxis=dict(showgrid=True, gridcolor='rgba(63,63,70,0.3)', tickfont=dict(color='#71717a', size=10)),
+        bargap=0.3
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
-# Data Explorer
-st.markdown('<p class="section-header">🔍 Data Explorer</p>', unsafe_allow_html=True)
+# Data Tables
+st.markdown("""
+<div class="section-header">
+    <div class="section-icon">📋</div>
+    <span class="section-title">Data Explorer</span>
+</div>
+""", unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4 = st.tabs(["🏆 Top Products", "👥 Top Customers", "🏪 Top Sellers", "📊 Sample Data"])
+tab1, tab2, tab3 = st.tabs(["Top Products", "Top Customers", "Top Sellers"])
 
 with tab1:
-    top_products = dim_products.nlargest(12, 'total_revenue')[
-        ['product_id', 'product_category_name', 'times_sold', 'total_revenue', 'sales_tier']
-    ].copy()
-    top_products['total_revenue'] = top_products['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
-    st.dataframe(top_products, use_container_width=True, hide_index=True)
+    products = dim_products.nlargest(10, 'total_revenue')[['product_id', 'product_category_name', 'times_sold', 'total_revenue', 'sales_tier']].copy()
+    products['total_revenue'] = products['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
+    st.dataframe(products, use_container_width=True, hide_index=True)
 
 with tab2:
-    top_customers = dim_customers.nlargest(12, 'lifetime_value')[
-        ['customer_unique_id', 'city', 'state', 'total_orders', 'lifetime_value', 'customer_type']
-    ].copy()
-    top_customers['lifetime_value'] = top_customers['lifetime_value'].apply(lambda x: f"R$ {x:,.2f}")
-    st.dataframe(top_customers, use_container_width=True, hide_index=True)
+    customers = dim_customers.nlargest(10, 'lifetime_value')[['customer_unique_id', 'city', 'state', 'total_orders', 'lifetime_value', 'customer_type']].copy()
+    customers['lifetime_value'] = customers['lifetime_value'].apply(lambda x: f"R$ {x:,.2f}")
+    st.dataframe(customers, use_container_width=True, hide_index=True)
 
 with tab3:
-    top_sellers = dim_sellers.nlargest(12, 'total_revenue')[
-        ['seller_id', 'state', 'total_orders', 'total_revenue', 'avg_review_score', 'seller_tier']
-    ].copy()
-    top_sellers['total_revenue'] = top_sellers['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
-    top_sellers['avg_review_score'] = top_sellers['avg_review_score'].apply(lambda x: f"{x:.2f} ⭐")
-    st.dataframe(top_sellers, use_container_width=True, hide_index=True)
-
-with tab4:
-    sample = filtered_orders.head(50)[
-        ['order_id', 'customer_id', 'product_category_name', 'price', 'freight_value', 'total_order_value']
-    ].copy()
-    sample['total_order_value'] = sample['total_order_value'].apply(lambda x: f"R$ {x:,.2f}")
-    st.dataframe(sample, use_container_width=True, hide_index=True)
+    sellers = dim_sellers.nlargest(10, 'total_revenue')[['seller_id', 'state', 'total_orders', 'total_revenue', 'avg_review_score', 'seller_tier']].copy()
+    sellers['total_revenue'] = sellers['total_revenue'].apply(lambda x: f"R$ {x:,.2f}")
+    sellers['avg_review_score'] = sellers['avg_review_score'].apply(lambda x: f"{x:.1f} ⭐")
+    st.dataframe(sellers, use_container_width=True, hide_index=True)
 
 
-# Ultra Premium Footer
+# Footer
 st.markdown("""
-<div class="footer">
-    <p class="footer-title">Olist E-commerce Analytics Platform</p>
-    <p class="footer-subtitle">Transforming raw data into actionable insights with Modern Data Stack</p>
-    <div class="tech-stack">
-        <span class="tech-item">🦆 DuckDB / MotherDuck</span>
-        <span class="tech-item">📊 dbt Core</span>
-        <span class="tech-item">🐍 Python</span>
-        <span class="tech-item">🎨 Streamlit</span>
-        <span class="tech-item">📈 Plotly</span>
+<div class="footer-container">
+    <div class="footer-brand">Olist E-commerce Analytics</div>
+    <div class="footer-tagline">Modern Data Stack • Real-time Analytics • Enterprise Grade</div>
+    <div class="footer-tech-stack">
+        <span class="tech-badge">🦆 MotherDuck</span>
+        <span class="tech-badge">📊 dbt Core</span>
+        <span class="tech-badge">🐍 Python</span>
+        <span class="tech-badge">🎨 Streamlit</span>
+        <span class="tech-badge">📈 Plotly</span>
     </div>
-    <a href="https://github.com/mohith-akash/olist-analytics-platform" target="_blank">📂 View Source Code</a>
+    <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="footer-link">
+        View on GitHub →
+    </a>
 </div>
 """, unsafe_allow_html=True)
