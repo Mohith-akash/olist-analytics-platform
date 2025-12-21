@@ -2,5 +2,12 @@
 primaryColor = "#667eea"
 backgroundColor = "#ffffff"
 secondaryBackgroundColor = "#f8fafc"
-textColor = "#1f2937"
+textColor = "#1e293b"
 font = "sans serif"
+
+[server]
+headless = true
+runOnSave = true
+
+[browser]
+gatherUsageStats = false
