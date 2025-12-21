@@ -357,41 +357,40 @@ fig.update_layout(
 st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 
-# ===== CHART 3: CUSTOMER SEGMENTS =====
-st.markdown('<div class="section-title">👥 Customer Segmentation</div>', unsafe_allow_html=True)
+# ===== CHART 3: ORDER & CUSTOMER ANALYSIS =====
+st.markdown('<div class="section-title">👥 Order & Customer Distribution</div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("""
     <div class="chart-card">
-        <div class="chart-header">Revenue by Customer Type</div>
+        <div class="chart-header">Order Value Distribution</div>
         <div class="chart-desc">
-            <strong>Segments:</strong> One-time (1 order), Returning (2+ orders), No Orders | 
-            <strong>Values:</strong> Total lifetime revenue (R$) per segment | 
-            <strong>What it shows:</strong> Which customer types contribute most to revenue
+            <strong>X-axis:</strong> Order Value Range (R$) | 
+            <strong>Y-axis:</strong> Number of Orders | 
+            <strong>What it shows:</strong> How order values are distributed - most orders are small or large?
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    cust_seg = dim_customers.groupby('customer_type')['lifetime_value'].sum().reset_index()
-    cust_seg.columns = ['Customer Type', 'Lifetime Revenue']
+    # Create histogram of order values
+    order_vals = df['total_order_value'].dropna()
     
-    fig = go.Figure(go.Pie(
-        labels=cust_seg['Customer Type'],
-        values=cust_seg['Lifetime Revenue'],
-        hole=0.5,
-        marker=dict(colors=['#a855f7', '#22c55e', '#3f3f46'], line=dict(color='#0f0f12', width=2)),
-        textinfo='label+percent',
-        textfont=dict(color='#fff', size=12),
-        hovertemplate='<b>%{label}</b><br>Revenue: R$ %{value:,.0f}<br>Share: %{percent}<extra></extra>'
+    fig = go.Figure(go.Histogram(
+        x=order_vals,
+        nbinsx=30,
+        marker_color='#a855f7',
+        hovertemplate='Range: R$%{x:.0f}<br>Orders: %{y}<extra></extra>'
     ))
     
     fig.update_layout(
         height=350,
-        paper_bgcolor='rgba(0,0,0,0)',
-        showlegend=False,
-        margin=dict(t=20, b=20)
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(title='Order Value (R$)', tickfont=dict(color='#9898a0'), title_font=dict(color='#9898a0'), gridcolor='rgba(255,255,255,0.1)'),
+        yaxis=dict(title='Number of Orders', tickfont=dict(color='#9898a0'), title_font=dict(color='#9898a0'), gridcolor='rgba(255,255,255,0.1)'),
+        margin=dict(t=20, b=60),
+        bargap=0.05
     )
     
     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
