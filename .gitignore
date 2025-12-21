@@ -12,6 +12,7 @@ olist_dbt/target/
 olist_dbt/dbt_packages/
 olist_dbt/logs/
 olist_dbt/.user.yml
+olist_dbt/powerbi_exports/
 
 # IDE
 .vscode/
