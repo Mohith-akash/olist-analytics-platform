@@ -254,7 +254,7 @@ with col1:
         <div class="nav-desc">Detailed charts with filters</div>
     </div>
     """, unsafe_allow_html=True)
-    st.page_link("pages/1_📊_Analytics.py", label="Go to Analytics →", use_container_width=True)
+    st.page_link("pages/1_Analytics.py", label="Go to Analytics →", use_container_width=True)
 
 with col2:
     st.markdown("""
@@ -264,7 +264,7 @@ with col2:
         <div class="nav-desc">Search & download data</div>
     </div>
     """, unsafe_allow_html=True)
-    st.page_link("pages/2_🔍_Query_Data.py", label="Go to Query Data →", use_container_width=True)
+    st.page_link("pages/2_Query_Data.py", label="Go to Query Data →", use_container_width=True)
 
 with col3:
     st.markdown("""
@@ -274,7 +274,7 @@ with col3:
         <div class="nav-desc">SQL & dbt showcase</div>
     </div>
     """, unsafe_allow_html=True)
-    st.page_link("pages/3_🔧_Data_Engineering.py", label="Go to Data Engineering →", use_container_width=True)
+    st.page_link("pages/3_Data_Engineering.py", label="Go to Data Engineering →", use_container_width=True)
 
 
 # Quick Stats at bottom
