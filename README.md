@@ -11,6 +11,15 @@ This project transforms raw e-commerce data into a clean, analytics-ready data w
 - **Data Quality**: dbt tests for validation
 - **Documentation**: Full column-level documentation
 
+## 🔗 Live Demo
+
+| Demo | Description |
+|------|-------------|
+| 📖 [**dbt Docs**](https://mohith-akash.github.io/olist-analytics-platform/) | Interactive data lineage, models, and documentation |
+| 📊 **Power BI Dashboard** | *Coming soon - Publish to Web* |
+
+> **Note:** dbt docs are auto-deployed via GitHub Actions on every push to main.
+
 ## 🏗️ Architecture
 
 ```
