@@ -31,6 +31,7 @@ data/
 # Environment variables
 .env
 *.env
+.streamlit/secrets.toml
 
 # Generated exports (can be regenerated)
 powerbi_exports/

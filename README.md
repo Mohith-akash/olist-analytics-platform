@@ -16,9 +16,9 @@ This project transforms raw e-commerce data into a clean, analytics-ready data w
 | Demo | Description |
 |------|-------------|
 | 📖 [**dbt Docs**](https://mohith-akash.github.io/olist-analytics-platform/) | Interactive data lineage, models, and documentation |
-| 📊 **Power BI Dashboard** | *Coming soon - Publish to Web* |
+| 📊 [**Streamlit Dashboard**](https://olist-analytics.streamlit.app/) | Interactive analytics dashboard with KPIs and charts |
 
-> **Note:** dbt docs are auto-deployed via GitHub Actions on every push to main.
+> **Note:** dbt docs auto-deploy via GitHub Actions. Streamlit deploys on Streamlit Cloud.
 
 ## 🏗️ Architecture
 
