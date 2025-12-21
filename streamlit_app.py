@@ -539,6 +539,184 @@ with tab3:
     st.dataframe(sells, use_container_width=True, hide_index=True)
 
 
+# ===== DATA ENGINEERING SHOWCASE =====
+st.markdown('<div class="section-title">🔧 Data Engineering - SQL & dbt Skills</div>', unsafe_allow_html=True)
+
+st.markdown("""
+<div class="chart-card">
+    <div class="chart-header">Data Architecture & Transformation Pipeline</div>
+    <div class="chart-desc">
+        This dashboard is powered by a <strong>production-grade data pipeline</strong> using dbt (data build tool) for SQL transformations 
+        and MotherDuck (cloud DuckDB) for data warehousing. Below you can explore the actual SQL code and data model design.
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+eng_tab1, eng_tab2, eng_tab3, eng_tab4 = st.tabs(["📐 Data Model", "📝 fct_orders SQL", "📝 dim_customers SQL", "🔗 Lineage"])
+
+with eng_tab1:
+    st.markdown("""
+    ### 📐 Dimensional Model Architecture
+    
+    This project follows the **Kimball dimensional modeling** approach with a 3-layer architecture:
+    
+    | Layer | Description | Models |
+    |-------|-------------|--------|
+    | **Sources** | Raw data from Olist CSV files | 9 source tables |
+    | **Staging** | Cleaned & typed data | `stg_orders`, `stg_customers`, `stg_products`, etc. |
+    | **Marts** | Business-ready facts & dimensions | `fct_orders`, `dim_customers`, `dim_products`, `dim_sellers` |
+    
+    #### Key Design Decisions:
+    - **Fact Table (`fct_orders`)**: Grain = one row per order line item (product in order)
+    - **Dimension Tables**: Customer, Product, Seller dimensions with calculated metrics
+    - **Materialization**: All mart tables materialized as `table` for query performance
+    - **Data Quality**: dbt tests for `not_null`, `unique`, and `accepted_values`
+    """)
+
+with eng_tab2:
+    st.markdown("### 📝 fct_orders.sql - Fact Table")
+    st.markdown("*Joins orders, order_items, and products to create the core fact table with calculated `total_order_value`*")
+    
+    st.code('''-- fct_orders.sql (dbt model)
+with orders as (
+    select * from {{ ref('stg_orders') }}
+),
+
+order_items as (
+    select * from {{ ref('stg_order_items') }}
+),
+
+products as (
+    select * from {{ ref('stg_products') }}
+),
+
+final as (
+    select
+        -- Key IDs
+        order_items.order_id,
+        orders.customer_id,
+        order_items.product_id,
+        
+        -- Time details
+        orders.order_purchase_timestamp,
+        
+        -- Product details
+        products.product_category_name,
+        
+        -- Financials (calculated field)
+        order_items.price,
+        order_items.freight_value,
+        (order_items.price + order_items.freight_value) as total_order_value
+
+    from order_items
+    left join orders on order_items.order_id = orders.order_id
+    left join products on order_items.product_id = products.product_id
+)
+
+select * from final''', language='sql')
+
+with eng_tab3:
+    st.markdown("### 📝 dim_customers.sql - Customer Dimension")
+    st.markdown("*Calculates customer lifetime value, order counts, and segmentation using CTEs*")
+    
+    st.code('''-- dim_customers.sql (dbt model)
+{{ config(materialized='table') }}
+
+with customers as (
+    select * from {{ ref('stg_customers') }}
+),
+
+orders as (
+    select * from {{ ref('stg_orders') }}
+),
+
+order_items as (
+    select * from {{ ref('stg_order_items') }}
+),
+
+-- Calculate LTV and order counts per customer
+customer_orders as (
+    select
+        o.customer_id,
+        count(distinct o.order_id) as total_orders,
+        min(o.order_purchase_timestamp) as first_order_date,
+        max(o.order_purchase_timestamp) as last_order_date,
+        sum(oi.price) as total_revenue,
+        sum(oi.freight_value) as total_freight_paid,
+        avg(oi.price) as avg_order_value
+    from orders o
+    left join order_items oi on o.order_id = oi.order_id
+    group by o.customer_id
+),
+
+final as (
+    select
+        c.customer_id,
+        c.customer_unique_id,
+        c.city,
+        c.state,
+        
+        -- Calculated metrics
+        coalesce(co.total_orders, 0) as total_orders,
+        coalesce(co.total_revenue, 0) as lifetime_value,
+        coalesce(co.avg_order_value, 0) as avg_order_value,
+        
+        -- Customer segmentation logic
+        case
+            when co.total_orders > 1 then 'Returning'
+            when co.total_orders = 1 then 'One-time'
+            else 'No Orders'
+        end as customer_type
+
+    from customers c
+    left join customer_orders co on c.customer_id = co.customer_id
+)
+
+select * from final''', language='sql')
+
+with eng_tab4:
+    st.markdown("### 🔗 Data Lineage")
+    st.markdown("*How data flows from raw sources through transformations to final analytics*")
+    
+    st.markdown("""
+    ```
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                           DATA LINEAGE DIAGRAM                              │
+    └─────────────────────────────────────────────────────────────────────────────┘
+    
+    RAW DATA (CSV)          STAGING (dbt)              MARTS (dbt)              DASHBOARD
+    ───────────────         ─────────────              ──────────               ─────────
+    
+    olist_orders       ──►  stg_orders        ──┐
+                                               ├──►  fct_orders  ──────────►  📊 Charts
+    olist_order_items  ──►  stg_order_items   ──┤                              📈 KPIs
+                                               │                               📋 Tables
+    olist_products     ──►  stg_products      ──┘
+    
+    olist_customers    ──►  stg_customers     ──────►  dim_customers ────────►  👥 Analysis
+    
+    olist_sellers      ──►  stg_sellers       ──┬
+    olist_reviews      ──►  stg_reviews       ──┴──►  dim_sellers ──────────►  🏪 Metrics
+    
+    olist_geolocation  ──►  stg_geolocation   ──────►  (geographic enrichment)
+    olist_payments     ──►  stg_payments      ──────►  (payment analysis ready)
+    ```
+    
+    #### Key Transformations:
+    1. **Staging**: Data type casting, column renaming, basic cleaning
+    2. **Facts**: Joins across entities, calculated metrics (`total_order_value`)
+    3. **Dimensions**: Aggregations, CASE logic for segmentation, LTV calculation
+    
+    #### dbt Tests Applied:
+    - `unique` and `not_null` on all primary keys
+    - `accepted_values` on enum columns (customer_type, seller_tier)
+    - `relationships` tests for referential integrity
+    """)
+    
+    st.markdown("---")
+    st.markdown("📂 **[View Full dbt Project on GitHub](https://github.com/Mohith-Akash/olist-analytics-platform/tree/main/olist_dbt)**")
+
+
 # ===== FOOTER =====
 st.markdown("""
 <div class="footer">
