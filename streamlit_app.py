@@ -671,7 +671,7 @@ with col1:
             color=state_customers['revenue'],
             colorscale='Viridis',
             showscale=True,
-            colorbar=dict(title="Revenue", tickfont=dict(color='#94a3b8'), titlefont=dict(color='#94a3b8'))
+            colorbar=dict(title=dict(text="Revenue", font=dict(color='#94a3b8')), tickfont=dict(color='#94a3b8'))
         ),
         text=state_customers['customers'],
         textposition='outside',
@@ -708,7 +708,7 @@ with col2:
             color=state_sellers['rating'],
             colorscale='RdYlGn',
             showscale=True,
-            colorbar=dict(title="Avg Rating", tickfont=dict(color='#94a3b8'), titlefont=dict(color='#94a3b8'))
+            colorbar=dict(title=dict(text="Avg Rating", font=dict(color='#94a3b8')), tickfont=dict(color='#94a3b8'))
         ),
         text=state_sellers['sellers'],
         textposition='outside',
