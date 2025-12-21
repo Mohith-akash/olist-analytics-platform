@@ -533,7 +533,7 @@ with tab_home:
             yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=9)),
             margin=dict(t=10, b=40, l=50, r=10)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     with col2:
         st.markdown("""
@@ -570,7 +570,7 @@ with tab_home:
             font={'color': '#fff'},
             margin=dict(t=30, b=20, l=30, r=30)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     # Second row of charts
     col1, col2 = st.columns(2)
@@ -603,7 +603,7 @@ with tab_home:
             yaxis=dict(tickfont=dict(color='#fff', size=9)),
             margin=dict(t=10, b=10, l=10, r=80)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     with col2:
         st.markdown("""
@@ -632,7 +632,7 @@ with tab_home:
             showlegend=False,
             margin=dict(t=10, b=10, l=10, r=10)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     # Skills Section
     st.markdown('<div class="section-title">🎯 Technical Skills Demonstrated</div>', unsafe_allow_html=True)
@@ -890,7 +890,7 @@ with tab_analytics:
         legend=dict(orientation='h', y=1.1, font=dict(color='#fff')),
         margin=dict(t=40, b=60)
     )
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     # Two charts
     col1, col2 = st.columns(2)
@@ -907,7 +907,7 @@ with tab_analytics:
             xaxis=dict(tickfont=dict(color='#fff')),
             yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
             margin=dict(t=10, b=40))
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     with col2:
         st.markdown('<div class="section-title">⭐ Seller Performance Tiers</div>', unsafe_allow_html=True)
@@ -924,7 +924,7 @@ with tab_analytics:
             xaxis=dict(tickfont=dict(color='#fff')),
             yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
             margin=dict(t=10, b=40), bargap=0.4)
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
 
 
 # ============================================
@@ -956,7 +956,7 @@ with tab_query:
         col2.metric("Revenue", fmt_curr(month_data['total_order_value'].sum()))
         col3.metric("Avg Order", fmt_curr(month_data['total_order_value'].mean()))
         
-        st.dataframe(month_data.head(100), use_container_width=True, hide_index=True)
+        st.dataframe(month_data.head(100), width='stretch', hide_index=True)
         
         csv = month_data.to_csv(index=False)
         st.download_button(f"📥 Download {len(month_data):,} orders", csv, f"orders_{sel_month}.csv", "text/csv")
@@ -976,7 +976,7 @@ with tab_query:
         col2.metric("Revenue", fmt_curr(cat_data['total_revenue'].sum()))
         col3.metric("Units Sold", f"{cat_data['times_sold'].sum():,}")
         
-        st.dataframe(cat_data.sort_values('total_revenue', ascending=False), use_container_width=True, hide_index=True)
+        st.dataframe(cat_data.sort_values('total_revenue', ascending=False), width='stretch', hide_index=True)
         
         csv = cat_data.to_csv(index=False)
         st.download_button(f"📥 Download {len(cat_data):,} products", csv, "products.csv", "text/csv")
@@ -996,7 +996,7 @@ with tab_query:
         col2.metric("Total LTV", fmt_curr(state_data['lifetime_value'].sum()))
         col3.metric("Avg Orders", f"{state_data['total_orders'].mean():.2f}")
         
-        st.dataframe(state_data.nlargest(100, 'lifetime_value'), use_container_width=True, hide_index=True)
+        st.dataframe(state_data.nlargest(100, 'lifetime_value'), width='stretch', hide_index=True)
         
         csv = state_data.to_csv(index=False)
         st.download_button(f"📥 Download {len(state_data):,} customers", csv, f"customers_{sel_state}.csv", "text/csv")
