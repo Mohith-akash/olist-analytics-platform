@@ -9,7 +9,7 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +32,8 @@ jobs:
 
       - name: Check Python syntax
         run: |
-          python -m py_compile streamlit_app.py database.py styles.py utils.py ingest.py
+          python -m py_compile streamlit_app.py ingest.py
+          python -m py_compile src/*.py
           python -m py_compile tabs/*.py
 
       - name: Run dbt compile check

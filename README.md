@@ -152,17 +152,23 @@ pre-commit install
 
 ```
 olist_analytics_platform/
-├── 📊 streamlit_app.py              # Web dashboard
-├── 📥 ingest.py                     # Data loader
+├── 📊 streamlit_app.py              # Web dashboard entry point
+├── 📥 ingest.py                     # Data loader script
 ├── 📈 OLIST E-commerce Dashboard.pbix
 ├── 📋 requirements.txt
 │
-├── 📂 data/                         # Raw CSVs
+├── 📂 src/                          # Core modules
+│   ├── database.py                  # MotherDuck connection
+│   ├── styles.py                    # CSS injection
+│   └── utils.py                     # Formatting utilities
+├── 📂 tabs/                         # Dashboard tab components
+│   ├── home.py, analytics.py, ...
+├── 📂 data/                         # Raw CSVs (gitignored)
 ├── 📂 olist_dbt/
 │   └── models/
 │       ├── staging/                 # 8 staging models
 │       └── marts/                   # 4 mart models
-└── 📂 .github/workflows/            # CI/CD
+└── 📂 .github/workflows/            # CI/CD pipelines
 ```
 
 ---
