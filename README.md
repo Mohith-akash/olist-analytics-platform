@@ -25,6 +25,7 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 - **SQL Expertise** - dbt transformations, CTEs, JOINs
 - **Data Visualization** - Interactive dashboards
 - **Cloud Warehousing** - MotherDuck (serverless DuckDB)
+- **CI/CD** - GitHub Actions for linting, testing & automated dbt docs deployment
 
 ---
 
