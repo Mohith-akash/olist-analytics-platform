@@ -6,8 +6,8 @@ Streamlit app for e-commerce data visualization
 import streamlit as st
 import pandas as pd
 
-from src.styles import inject_css
-from src.database import load_data
+from app.styles import inject_css
+from app.database import load_data
 from tabs import home, engineering, analytics, query, about
 
 

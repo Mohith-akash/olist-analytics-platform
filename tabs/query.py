@@ -3,7 +3,7 @@ Query Data tab component
 """
 
 import streamlit as st
-from src.utils import fmt_curr
+from app.utils import fmt_curr
 
 
 def render(fct_orders, dim_products, dim_customers):

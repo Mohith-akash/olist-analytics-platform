@@ -157,7 +157,7 @@ olist_analytics_platform/
 ├── 📈 OLIST E-commerce Dashboard.pbix
 ├── 📋 requirements.txt
 │
-├── 📂 src/                          # Core modules
+├── 📂 app/                          # Core modules
 │   ├── database.py                  # MotherDuck connection
 │   ├── styles.py                    # CSS injection
 │   └── utils.py                     # Formatting utilities

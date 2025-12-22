@@ -33,7 +33,7 @@ jobs:
       - name: Check Python syntax
         run: |
           python -m py_compile streamlit_app.py ingest.py
-          python -m py_compile src/*.py
+          python -m py_compile app/*.py
           python -m py_compile tabs/*.py
 
       - name: Run dbt compile check

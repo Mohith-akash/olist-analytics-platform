@@ -4,7 +4,7 @@ Home tab component
 
 import streamlit as st
 import plotly.graph_objects as go
-from src.utils import fmt_curr, fmt_num
+from app.utils import fmt_curr, fmt_num
 
 
 def render(fct_orders, dim_customers, dim_sellers):
