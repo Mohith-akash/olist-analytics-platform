@@ -7,10 +7,11 @@ import streamlit as st
 
 def inject_css():
     """Inject custom CSS styling into the Streamlit app."""
-    st.markdown("""
+    st.markdown(
+        """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
+
     :root {
         --bg-dark: #0a0a0f;
         --bg-card: #12121a;
@@ -26,17 +27,17 @@ def inject_css():
         --orange: #f97316;
         --glow-purple: rgba(168, 85, 247, 0.4);
     }
-    
+
     * { font-family: 'Inter', sans-serif; }
-    
-    .stApp { 
+
+    .stApp {
         background: linear-gradient(135deg, #0a0a0f 0%, #0d0d15 50%, #0a0a12 100%);
     }
-    
+
     #MainMenu, footer, header { visibility: hidden; }
     section[data-testid="stSidebar"] { display: none; }
     .block-container { padding: 0.5rem 2rem 2rem 2rem; max-width: 100%; }
-    
+
     /* Animated Background Particles */
     .stApp::before {
         content: '';
@@ -45,14 +46,14 @@ def inject_css():
         left: 0;
         width: 100%;
         height: 100%;
-        background: 
+        background:
             radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
             radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
             radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 60%);
         pointer-events: none;
         z-index: 0;
     }
-    
+
     /* Premium Tab Styling */
     .stTabs [data-baseweb="tab-list"] {
         background: linear-gradient(135deg, rgba(18, 18, 26, 0.9) 0%, rgba(20, 20, 30, 0.9) 100%);
@@ -63,7 +64,7 @@ def inject_css():
         border: 1px solid rgba(168, 85, 247, 0.2);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
     }
-    
+
     .stTabs [data-baseweb="tab"] {
         background: transparent;
         border-radius: 12px;
@@ -75,21 +76,21 @@ def inject_css():
         border: none;
         transition: all 0.3s ease;
     }
-    
+
     .stTabs [data-baseweb="tab"]:hover {
         background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
         color: var(--purple);
         transform: translateY(-2px);
     }
-    
+
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%) !important;
         color: white !important;
         box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
     }
-    
+
     .stTabs [data-baseweb="tab-border"], .stTabs [data-baseweb="tab-highlight"] { display: none; }
-    
+
     /* Hero Header */
     .hero-header {
         background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #f97316 100%);
@@ -100,7 +101,7 @@ def inject_css():
         overflow: hidden;
         box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);
     }
-    
+
     .hero-header::before {
         content: '';
         position: absolute;
@@ -111,12 +112,12 @@ def inject_css():
         background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
         animation: shimmer 3s infinite;
     }
-    
+
     @keyframes shimmer {
         0% { transform: translateX(-100%) rotate(45deg); }
         100% { transform: translateX(100%) rotate(45deg); }
     }
-    
+
     .hero-header h1 {
         font-size: 2rem;
         font-weight: 800;
@@ -126,7 +127,7 @@ def inject_css():
         position: relative;
         z-index: 1;
     }
-    
+
     .hero-header p {
         color: rgba(255,255,255,0.9);
         margin: 0.5rem 0 0 0;
@@ -135,7 +136,7 @@ def inject_css():
         position: relative;
         z-index: 1;
     }
-    
+
     /* Glowing KPI Cards */
     .kpi-row {
         display: grid;
@@ -143,7 +144,7 @@ def inject_css():
         gap: 1.25rem;
         margin-bottom: 2rem;
     }
-    
+
     .kpi-card {
         background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(25, 25, 35, 0.8) 100%);
         backdrop-filter: blur(10px);
@@ -155,7 +156,7 @@ def inject_css():
         overflow: hidden;
         transition: all 0.3s ease;
     }
-    
+
     .kpi-card::before {
         content: '';
         position: absolute;
@@ -165,19 +166,19 @@ def inject_css():
         height: 3px;
         background: linear-gradient(90deg, #a855f7, #8b5cf6, #f97316);
     }
-    
+
     .kpi-card:hover {
         transform: translateY(-5px);
         border-color: rgba(168, 85, 247, 0.5);
         box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2), 0 0 20px rgba(168, 85, 247, 0.1);
     }
-    
+
     .kpi-icon {
         font-size: 2rem;
         margin-bottom: 0.75rem;
         filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.5));
     }
-    
+
     .kpi-label {
         font-size: 0.7rem;
         color: var(--text-dim);
@@ -185,7 +186,7 @@ def inject_css():
         letter-spacing: 1px;
         font-weight: 600;
     }
-    
+
     .kpi-value {
         font-size: 1.75rem;
         font-weight: 800;
@@ -195,13 +196,13 @@ def inject_css():
         background-clip: text;
         margin: 0.5rem 0;
     }
-    
+
     .kpi-desc {
         font-size: 0.7rem;
         color: var(--green);
         font-weight: 500;
     }
-    
+
     /* Section Titles */
     .section-title {
         font-size: 1.1rem;
@@ -213,7 +214,7 @@ def inject_css():
         border-image: linear-gradient(180deg, #a855f7, #8b5cf6) 1;
         text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
     }
-    
+
     /* Premium Chart Cards */
     .chart-card {
         background: linear-gradient(135deg, rgba(18, 18, 26, 0.9) 0%, rgba(22, 22, 32, 0.9) 100%);
@@ -224,12 +225,12 @@ def inject_css():
         margin-bottom: 1rem;
         transition: all 0.3s ease;
     }
-    
+
     .chart-card:hover {
         border-color: rgba(168, 85, 247, 0.4);
         box-shadow: 0 5px 20px rgba(168, 85, 247, 0.15);
     }
-    
+
     .chart-header {
         font-size: 1rem;
         font-weight: 700;
@@ -238,13 +239,13 @@ def inject_css():
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
-    
+
     .chart-desc {
         font-size: 0.75rem;
         color: var(--text-dim);
         margin-top: 0.25rem;
     }
-    
+
     /* Skills Section */
     .skill-card {
         background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(25, 25, 35, 0.8) 100%);
@@ -253,19 +254,19 @@ def inject_css():
         padding: 1.5rem;
         height: 100%;
     }
-    
+
     .skill-card h4 {
         color: var(--purple);
         margin-bottom: 1rem;
     }
-    
+
     .skill-tags {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
         margin: 0.75rem 0;
     }
-    
+
     .skill-tag {
         background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
         border: 1px solid rgba(168, 85, 247, 0.4);
@@ -276,12 +277,12 @@ def inject_css():
         font-weight: 500;
         transition: all 0.2s ease;
     }
-    
+
     .skill-tag:hover {
         background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(236, 72, 153, 0.4) 100%);
         transform: scale(1.05);
     }
-    
+
     /* Premium Footer */
     .footer-box {
         background: linear-gradient(135deg, rgba(18, 18, 26, 0.9) 0%, rgba(22, 22, 32, 0.9) 100%);
@@ -293,7 +294,7 @@ def inject_css():
         position: relative;
         overflow: hidden;
     }
-    
+
     .footer-box::before {
         content: '';
         position: absolute;
@@ -303,7 +304,7 @@ def inject_css():
         height: 3px;
         background: linear-gradient(90deg, #a855f7, #8b5cf6, #f97316);
     }
-    
+
     .github-btn {
         display: inline-block;
         background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
@@ -317,18 +318,18 @@ def inject_css():
         transition: all 0.3s ease;
         box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
     }
-    
+
     .github-btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(168, 85, 247, 0.5);
     }
-    
+
     /* Data Tables */
     .stDataFrame {
         border-radius: 12px;
         overflow: hidden;
     }
-    
+
     /* Metrics styling */
     [data-testid="stMetricValue"] {
         background: linear-gradient(135deg, #fff 0%, #c4b5fd 100%);
@@ -337,4 +338,6 @@ def inject_css():
         background-clip: text;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+        unsafe_allow_html=True,
+    )

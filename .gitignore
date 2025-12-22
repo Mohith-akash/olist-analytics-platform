@@ -6,6 +6,7 @@ __pycache__/
 *.py[cod]
 *.pyo
 .Python
+.ruff_cache/
 
 # dbt
 olist_dbt/target/

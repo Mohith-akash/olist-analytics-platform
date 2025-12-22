@@ -6,8 +6,8 @@ Streamlit app for e-commerce data visualization
 import streamlit as st
 import pandas as pd
 
-from styles import inject_css
-from database import load_data
+from src.styles import inject_css
+from src.database import load_data
 from tabs import home, engineering, analytics, query, about
 
 
@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="Olist Analytics",
     page_icon="🛒",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
 # Inject custom CSS
@@ -25,20 +25,18 @@ inject_css()
 # Load data from MotherDuck
 try:
     fct_orders, dim_customers, dim_products, dim_sellers = load_data()
-    fct_orders['order_purchase_timestamp'] = pd.to_datetime(fct_orders['order_purchase_timestamp'])
+    fct_orders["order_purchase_timestamp"] = pd.to_datetime(
+        fct_orders["order_purchase_timestamp"]
+    )
 except Exception as e:
     st.error(f"Connection Error: {e}")
     st.stop()
 
 
 # Tab navigation
-tab_home, tab_engineering, tab_analytics, tab_query, tab_about = st.tabs([
-    "🏠 HOME", 
-    "🔧 DATA ENGINEERING", 
-    "📊 ANALYTICS", 
-    "🔍 QUERY DATA",
-    "👤 ABOUT"
-])
+tab_home, tab_engineering, tab_analytics, tab_query, tab_about = st.tabs(
+    ["🏠 HOME", "🔧 DATA ENGINEERING", "📊 ANALYTICS", "🔍 QUERY DATA", "👤 ABOUT"]
+)
 
 # Render each tab
 with tab_home:
