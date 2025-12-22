@@ -337,6 +337,111 @@ def inject_css():
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
+
+    /* ==================== MOBILE RESPONSIVENESS ==================== */
+
+    /* Tablet breakpoint */
+    @media (max-width: 992px) {
+        .kpi-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .hero-header {
+            padding: 1.5rem;
+        }
+
+        .hero-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 0.6rem 1rem;
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Mobile breakpoint */
+    @media (max-width: 768px) {
+        .block-container {
+            padding: 0.5rem 1rem 2rem 1rem;
+        }
+
+        .kpi-row {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .kpi-card {
+            padding: 1rem;
+        }
+
+        .kpi-value {
+            font-size: 1.4rem;
+        }
+
+        .kpi-label {
+            font-size: 0.6rem;
+        }
+
+        .hero-header {
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .hero-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .hero-header p {
+            font-size: 0.85rem;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        .stTabs [data-baseweb="tab-list"] {
+            border-radius: 10px;
+            padding: 0.25rem;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .skill-card {
+            padding: 1rem;
+        }
+
+        .chart-card {
+            padding: 1rem;
+        }
+
+        .footer-box {
+            padding: 1.5rem 1rem;
+        }
+    }
+
+    /* Small phone breakpoint */
+    @media (max-width: 480px) {
+        .kpi-row {
+            grid-template-columns: 1fr;
+        }
+
+        .kpi-value {
+            font-size: 1.5rem;
+        }
+
+        .hero-header h1 {
+            font-size: 1.1rem;
+        }
+    }
 </style>
 """,
         unsafe_allow_html=True,
