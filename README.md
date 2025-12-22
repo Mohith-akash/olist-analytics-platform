@@ -32,13 +32,13 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 ## 📊 Dashboard Preview
 
 ### KPIs & Insights
-![Dashboard Hero](screenshot_hero.png)
+![Dashboard Hero](docs/images/screenshot_hero.png)
 
 ### Charts & Analytics
-![Dashboard Charts](screenshot_charts.png)
+![Dashboard Charts](docs/images/screenshot_charts.png)
 
 ### Power BI Desktop
-![Power BI Dashboard](dashboard_preview.png)
+![Power BI Dashboard](docs/images/dashboard_preview.png)
 
 ---
 
@@ -122,7 +122,7 @@ export MOTHERDUCK_TOKEN=your_token_here  # Mac/Linux
 set MOTHERDUCK_TOKEN=your_token_here     # Windows
 
 # Load data to MotherDuck
-python ingest.py
+python scripts/ingest.py
 
 # Build dbt models
 cd olist_dbt
@@ -152,9 +152,7 @@ pre-commit install
 
 ```
 olist_analytics_platform/
-├── 📊 streamlit_app.py              # Web dashboard entry point
-├── 📥 ingest.py                     # Data loader script
-├── 📈 OLIST E-commerce Dashboard.pbix
+├── 📊 streamlit_app.py              # Dashboard entry point
 ├── 📋 requirements.txt
 │
 ├── 📂 app/                          # Core modules
@@ -163,8 +161,12 @@ olist_analytics_platform/
 │   └── utils.py                     # Formatting utilities
 ├── 📂 tabs/                         # Dashboard tab components
 │   ├── home.py, analytics.py, ...
-├── 📂 data/                         # Raw CSVs (gitignored)
-├── 📂 olist_dbt/
+├── 📂 scripts/                      # Data ingestion scripts
+│   └── ingest.py
+├── 📂 reports/                      # Power BI reports
+│   └── OLIST E-commerce Dashboard.pbix
+├── 📂 docs/images/                  # Screenshots & images
+├── 📂 olist_dbt/                    # dbt project
 │   └── models/
 │       ├── staging/                 # 8 staging models
 │       └── marts/                   # 4 mart models

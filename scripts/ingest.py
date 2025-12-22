@@ -2,11 +2,12 @@
 ingest.py - Load Olist CSVs to MotherDuck
 Run once to populate the raw_olist schema
 """
+
 import duckdb
 import os
 
 print("Connecting to MotherDuck...")
-con = duckdb.connect('md:') 
+con = duckdb.connect("md:")
 
 print("Creating database...")
 con.sql("CREATE DATABASE IF NOT EXISTS olist_analytics;")
@@ -22,7 +23,7 @@ files_to_tables = {
     "olist_orders_dataset.csv": "orders",
     "olist_products_dataset.csv": "products",
     "olist_sellers_dataset.csv": "sellers",
-    "product_category_name_translation.csv": "category_translation"
+    "product_category_name_translation.csv": "category_translation",
 }
 
 print("Creating raw_olist schema...")
@@ -33,11 +34,11 @@ print("Loading data...")
 
 for csv_file, table_name in files_to_tables.items():
     file_path = os.path.join(data_folder, csv_file)
-    
+
     if os.path.exists(file_path):
         print(f"  {table_name}...")
         con.sql(f"""
-            CREATE OR REPLACE TABLE raw_olist.{table_name} AS 
+            CREATE OR REPLACE TABLE raw_olist.{table_name} AS
             SELECT * FROM read_csv_auto('{file_path}', normalize_names=True);
         """)
     else:
