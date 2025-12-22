@@ -6,8 +6,10 @@
 
 [![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://olist-analytics-platform.streamlit.app/)
 [![dbt](https://img.shields.io/badge/dbt-Docs-FF694B?logo=dbt&logoColor=white)](https://mohith-akash.github.io/olist-analytics-platform/)
+[![CI](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
 [![MotherDuck](https://img.shields.io/badge/MotherDuck-DuckDB-FFC107?logo=duckdb&logoColor=black)](https://motherduck.com)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 **[Live Dashboard](https://olist-analytics-platform.streamlit.app/)** · **[dbt Docs](https://mohith-akash.github.io/olist-analytics-platform/)** · **[Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)**
 
@@ -166,8 +168,8 @@ olist_analytics_platform/
 
 ## 📚 Dataset
 
-> **Olist Brazilian E-commerce Dataset**  
-> 100K+ orders · 9 tables · 2016-2018  
+> **Olist Brazilian E-commerce Dataset**
+> 100K+ orders · 9 tables · 2016-2018
 > [Kaggle](https://www.kaggle.com/olistbr/brazilian-ecommerce)
 
 ---
