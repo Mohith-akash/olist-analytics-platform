@@ -161,6 +161,9 @@ def render(fct_orders):
         <p style="color: #888; margin: 0.75rem 0;">
             Open to Data Engineering, Analytics Engineering, and Data Analyst roles
         </p>
+        <p style="color: #666; font-size: 0.85rem; margin: 0.5rem 0;">
+            Check out my other projects featuring Dagster, RAG, Gemini AI, and more on GitHub
+        </p>
         <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="github-btn">
             📂 View Full Source Code
         </a>

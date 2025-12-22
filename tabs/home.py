@@ -138,7 +138,7 @@ def render(fct_orders, dim_customers, dim_sellers):
             yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=9)),
             margin=dict(t=10, b=40, l=50, r=10)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     with col2:
         st.markdown("""
@@ -174,7 +174,7 @@ def render(fct_orders, dim_customers, dim_sellers):
             font={'color': '#fff'},
             margin=dict(t=30, b=20, l=30, r=30)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     # Second row of charts
     col1, col2 = st.columns(2)
@@ -207,7 +207,7 @@ def render(fct_orders, dim_customers, dim_sellers):
             yaxis=dict(tickfont=dict(color='#fff', size=9)),
             margin=dict(t=10, b=10, l=10, r=80)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     with col2:
         st.markdown("""
@@ -236,7 +236,7 @@ def render(fct_orders, dim_customers, dim_sellers):
             showlegend=False,
             margin=dict(t=10, b=10, l=10, r=10)
         )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     # Skills Section
     st.markdown('<div class="section-title">🎯 Technical Skills Demonstrated</div>', unsafe_allow_html=True)

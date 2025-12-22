@@ -53,7 +53,7 @@ def render(fct_orders, dim_customers, dim_sellers):
         legend=dict(orientation='h', y=1.1, font=dict(color='#fff')),
         margin=dict(t=40, b=60)
     )
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     # Two charts row
     col1, col2 = st.columns(2)
@@ -70,7 +70,7 @@ def render(fct_orders, dim_customers, dim_sellers):
             xaxis=dict(tickfont=dict(color='#fff')),
             yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
             margin=dict(t=10, b=40))
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})
     
     with col2:
         st.markdown('<div class="section-title">⭐ Seller Performance Tiers</div>', unsafe_allow_html=True)
@@ -87,4 +87,4 @@ def render(fct_orders, dim_customers, dim_sellers):
             xaxis=dict(tickfont=dict(color='#fff')),
             yaxis=dict(gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888')),
             margin=dict(t=10, b=40), bargap=0.4)
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, width='stretch', config={'displayModeBar': False})

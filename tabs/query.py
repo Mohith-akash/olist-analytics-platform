@@ -33,7 +33,7 @@ def render(fct_orders, dim_products, dim_customers):
         col2.metric("Revenue", fmt_curr(month_data['total_order_value'].sum()))
         col3.metric("Avg Order", fmt_curr(month_data['total_order_value'].mean()))
         
-        st.dataframe(month_data.head(100), use_container_width=True, hide_index=True)
+        st.dataframe(month_data.head(100), width='stretch', hide_index=True)
         
         csv = month_data.to_csv(index=False)
         st.download_button(f"📥 Download {len(month_data):,} orders", csv, f"orders_{sel_month}.csv", "text/csv")
@@ -53,7 +53,7 @@ def render(fct_orders, dim_products, dim_customers):
         col2.metric("Revenue", fmt_curr(cat_data['total_revenue'].sum()))
         col3.metric("Units Sold", f"{cat_data['times_sold'].sum():,}")
         
-        st.dataframe(cat_data.sort_values('total_revenue', ascending=False), use_container_width=True, hide_index=True)
+        st.dataframe(cat_data.sort_values('total_revenue', ascending=False), width='stretch', hide_index=True)
         
         csv = cat_data.to_csv(index=False)
         st.download_button(f"📥 Download {len(cat_data):,} products", csv, "products.csv", "text/csv")
@@ -73,7 +73,7 @@ def render(fct_orders, dim_products, dim_customers):
         col2.metric("Total LTV", fmt_curr(state_data['lifetime_value'].sum()))
         col3.metric("Avg Orders", f"{state_data['total_orders'].mean():.2f}")
         
-        st.dataframe(state_data.nlargest(100, 'lifetime_value'), use_container_width=True, hide_index=True)
+        st.dataframe(state_data.nlargest(100, 'lifetime_value'), width='stretch', hide_index=True)
         
         csv = state_data.to_csv(index=False)
         st.download_button(f"📥 Download {len(state_data):,} customers", csv, f"customers_{sel_state}.csv", "text/csv")
