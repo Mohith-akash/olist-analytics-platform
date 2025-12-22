@@ -30,7 +30,7 @@ def render(fct_orders, dim_customers, dim_sellers):
     # 6 KPI Cards
     st.markdown(
         f"""
-    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 2rem;">
+    <div class="kpi-grid">
         <div class="kpi-card">
             <div class="kpi-icon">💰</div>
             <div class="kpi-label">Total Revenue</div>

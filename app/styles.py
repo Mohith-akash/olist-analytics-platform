@@ -145,6 +145,15 @@ def inject_css():
         margin-bottom: 2rem;
     }
 
+    /* 6-column KPI grid for homepage */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+
     .kpi-card {
         background: linear-gradient(135deg, rgba(18, 18, 26, 0.8) 0%, rgba(25, 25, 35, 0.8) 100%);
         backdrop-filter: blur(10px);
@@ -342,7 +351,8 @@ def inject_css():
 
     /* Tablet breakpoint */
     @media (max-width: 992px) {
-        .kpi-row {
+        .kpi-row,
+        .kpi-grid {
             grid-template-columns: repeat(3, 1fr);
         }
 
@@ -366,7 +376,8 @@ def inject_css():
             padding: 0.5rem 1rem 2rem 1rem;
         }
 
-        .kpi-row {
+        .kpi-row,
+        .kpi-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
         }
@@ -430,7 +441,8 @@ def inject_css():
 
     /* Small phone breakpoint */
     @media (max-width: 480px) {
-        .kpi-row {
+        .kpi-row,
+        .kpi-grid {
             grid-template-columns: 1fr;
         }
 
