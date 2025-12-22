@@ -77,18 +77,70 @@ CSV Files → Python Ingestion → MotherDuck → dbt Transformations → Dashbo
 
 ## 🚀 Quick Start
 
+### 1. Clone & Setup Environment
+
 ```bash
-# 1. Activate environment
+git clone https://github.com/Mohith-akash/olist-analytics-platform.git
+cd olist-analytics-platform
+
+# Create virtual environment
+python -m venv venv
 .\venv\Scripts\activate        # Windows
 source venv/bin/activate       # Mac/Linux
 
-# 2. Load data to MotherDuck
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Download the Dataset
+
+1. Download from [Kaggle: Brazilian E-commerce Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)
+2. Extract the ZIP file
+3. Place all CSV files in the `data/` folder:
+
+```
+data/
+├── olist_customers_dataset.csv
+├── olist_orders_dataset.csv
+├── olist_order_items_dataset.csv
+├── olist_order_payments_dataset.csv
+├── olist_order_reviews_dataset.csv
+├── olist_products_dataset.csv
+├── olist_sellers_dataset.csv
+├── olist_geolocation_dataset.csv
+└── product_category_name_translation.csv
+```
+
+### 3. Load Data & Build Models
+
+```bash
+# Set your MotherDuck token (get one at motherduck.com)
+export MOTHERDUCK_TOKEN=your_token_here  # Mac/Linux
+set MOTHERDUCK_TOKEN=your_token_here     # Windows
+
+# Load data to MotherDuck
 python ingest.py
 
-# 3. Build dbt models
+# Build dbt models
 cd olist_dbt
+pip install dbt-duckdb
+dbt deps
 dbt run
 dbt test
+```
+
+### 4. Run the Dashboard
+
+```bash
+cd ..
+streamlit run streamlit_app.py
+```
+
+### Optional: Setup Pre-commit Hooks
+
+```bash
+pip install pre-commit
+pre-commit install
 ```
 
 ---
