@@ -132,14 +132,8 @@ def render(fct_orders, dim_customers, dim_sellers):
             '<div class="section-title">⭐ Seller Performance Tiers</div>',
             unsafe_allow_html=True,
         )
-        # Filter sellers based on orders in the filtered dataset
-        filtered_seller_ids = df["seller_id"].unique()
-        filtered_sellers = dim_sellers[
-            dim_sellers["seller_id"].isin(filtered_seller_ids)
-        ]
-        tier_data = (
-            filtered_sellers.groupby("seller_tier").size().reset_index(name="Count")
-        )
+        # Note: Seller data shown for all categories (seller_id not in fct_orders)
+        tier_data = dim_sellers.groupby("seller_tier").size().reset_index(name="Count")
         tier_order = ["Platinum", "Gold", "Silver", "Bronze"]
         tier_data["seller_tier"] = pd.Categorical(
             tier_data["seller_tier"], categories=tier_order, ordered=True
