@@ -11,11 +11,41 @@ def render(fct_orders):
         """
     <div class="hero-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);">
         <h1>👤 About This Project</h1>
-        <p>Portfolio piece demonstrating data engineering skills</p>
+        <p>Portfolio piece demonstrating modern data engineering skills</p>
     </div>
     """,
         unsafe_allow_html=True,
     )
+
+    # Full-width tech stack at the top
+    st.markdown(
+        '<div class="section-title">🛠️ Tech Stack</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+    <div class="chart-card" style="padding: 1.5rem;">
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+            <span class="skill-tag" style="background: linear-gradient(135deg, #FF3621, #FF6B4A);">Databricks</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #00ADD8, #4FC3F7);">Delta Lake</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #3776AB, #5C9BD1);">Python</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #336791, #5A8DB5);">SQL</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #FF4B4B, #FF7676);">Streamlit</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #FF694B, #FF8F76);">dbt</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #00D4AA, #4DE8C8);">Polars</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #FFC107, #FFD54F);">DuckDB</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #4285F4, #6FA8FF);">Gemini AI</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #7B68EE, #9D8FFF);">RAG</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #181717, #4A4A4A);">GitHub Actions</span>
+            <span class="skill-tag" style="background: linear-gradient(135deg, #2496ED, #5DB9FF);">Docker</span>
+        </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("")  # Spacer
 
     col1, col2 = st.columns([1, 2])
 
@@ -25,12 +55,7 @@ def render(fct_orders):
         <div class="skill-card" style="text-align: center; padding: 2rem;">
             <div style="font-size: 4rem; margin-bottom: 1rem;">👨‍💻</div>
             <h3 style="color: white; margin: 0;">Mohith Akash</h3>
-            <p style="color: #a855f7; margin: 0.5rem 0;">Data Engineer</p>
-            <div class="skill-tags" style="justify-content: center; margin-top: 1rem;">
-                <span class="skill-tag">Python</span>
-                <span class="skill-tag">SQL</span>
-                <span class="skill-tag">dbt</span>
-            </div>
+            <p style="color: #a855f7; margin: 0.5rem 0; font-size: 0.9rem;">Analytics Engineer | Data Engineer</p>
         </div>
         """,
             unsafe_allow_html=True,
@@ -76,79 +101,14 @@ def render(fct_orders):
         st.markdown(
             """
         <div class="chart-card">
-            <div class="chart-header">End-to-End Data Pipeline</div>
+            <div class="chart-header">Lakehouse with Medallion Architecture</div>
             <p style="color: #888; margin: 0.5rem 0;">
-                Raw CSV files → Databricks (Delta Lake) → Medallion Architecture (Bronze/Silver/Gold) → Streamlit dashboard
+                Raw CSV → <strong>Databricks</strong> → Bronze (raw) → Silver (clean) → Gold (analytics) → <strong>Streamlit</strong>
             </p>
         </div>
         """,
             unsafe_allow_html=True,
         )
-
-        # Tech stack
-        st.markdown("#### 🛠️ Technologies Used")
-
-        tech_col1, tech_col2, tech_col3, tech_col4, tech_col5 = st.columns(5)
-
-        with tech_col1:
-            st.markdown(
-                """
-            <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">🧱</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">Databricks</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">Lakehouse Platform</p>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-
-        with tech_col2:
-            st.markdown(
-                """
-            <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">🔷</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">Delta Lake</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">Storage Format</p>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-
-        with tech_col3:
-            st.markdown(
-                """
-            <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">🐍</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">Python</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">Data Processing</p>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-
-        with tech_col4:
-            st.markdown(
-                """
-            <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">🎨</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">Streamlit</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">Dashboard</p>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-
-        with tech_col5:
-            st.markdown(
-                """
-            <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">⚙️</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">GitHub Actions</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">CI/CD Pipeline</p>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
 
     st.markdown("---")
 
@@ -165,11 +125,11 @@ def render(fct_orders):
         <div class="chart-card">
             <div class="chart-header">🔧 Data Engineering</div>
             <ul style="color: #888; margin: 1rem 0;">
-                <li>ETL/ELT pipelines</li>
-                <li>Dimensional modeling (Kimball)</li>
-                <li>Data quality testing</li>
-                <li>Cloud data warehousing</li>
-                <li>CI/CD with GitHub Actions</li>
+                <li>Lakehouse architecture</li>
+                <li>Medallion pattern (Bronze/Silver/Gold)</li>
+                <li>Dimensional modeling</li>
+                <li>Data quality & testing</li>
+                <li>CI/CD pipelines</li>
             </ul>
         </div>
         """,
@@ -180,12 +140,12 @@ def render(fct_orders):
         st.markdown(
             """
         <div class="chart-card">
-            <div class="chart-header">📝 SQL & dbt</div>
+            <div class="chart-header">📝 SQL & Transformations</div>
             <ul style="color: #888; margin: 1rem 0;">
                 <li>Complex JOINs & CTEs</li>
-                <li>Aggregate functions</li>
-                <li>CASE statements</li>
-                <li>dbt models & tests</li>
+                <li>Window functions</li>
+                <li>Databricks SQL</li>
+                <li>Delta Lake operations</li>
             </ul>
         </div>
         """,
@@ -196,10 +156,10 @@ def render(fct_orders):
         st.markdown(
             """
         <div class="chart-card">
-            <div class="chart-header">📊 Analytics & Viz</div>
+            <div class="chart-header">📊 Analytics & AI</div>
             <ul style="color: #888; margin: 1rem 0;">
-                <li>KPI design</li>
                 <li>Interactive dashboards</li>
+                <li>KPI design</li>
                 <li>Data storytelling</li>
                 <li>Plotly visualizations</li>
             </ul>
@@ -212,15 +172,12 @@ def render(fct_orders):
     st.markdown(
         """
     <div class="footer-box">
-        <h3 style="color: white; margin: 0;">🚀 Ready to Collaborate?</h3>
+        <h3 style="color: white; margin: 0;">🚀 Check Out My Other Projects</h3>
         <p style="color: #888; margin: 0.75rem 0;">
-            Open to Data Engineering, Analytics Engineering, and Data Analyst roles
+            GDELT News Analytics with Polars, RAG, and Gemini AI
         </p>
-        <p style="color: #666; font-size: 0.85rem; margin: 0.5rem 0;">
-            Check out my other projects featuring Dagster, RAG, Gemini AI, and more on GitHub
-        </p>
-        <a href="https://github.com/Mohith-Akash/olist-analytics-platform" target="_blank" class="github-btn">
-            📂 View Full Source Code
+        <a href="https://github.com/Mohith-Akash" target="_blank" class="github-btn">
+            📂 View All Projects on GitHub
         </a>
     </div>
     """,
