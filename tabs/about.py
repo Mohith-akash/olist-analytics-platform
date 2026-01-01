@@ -27,18 +27,17 @@ def render(fct_orders):
         """
     <div class="chart-card" style="padding: 1.5rem;">
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
-            <span class="skill-tag" style="background: linear-gradient(135deg, #FF3621, #FF6B4A);">Databricks</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #00ADD8, #4FC3F7);">Delta Lake</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #3776AB, #5C9BD1);">Python</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #336791, #5A8DB5);">SQL</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #FF4B4B, #FF7676);">Streamlit</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #FF694B, #FF8F76);">dbt</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #00D4AA, #4DE8C8);">Polars</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #FFC107, #FFD54F);">DuckDB</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #4285F4, #6FA8FF);">Gemini AI</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #7B68EE, #9D8FFF);">RAG</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #181717, #4A4A4A);">GitHub Actions</span>
-            <span class="skill-tag" style="background: linear-gradient(135deg, #2496ED, #5DB9FF);">Docker</span>
+            <span class="skill-tag">Databricks</span>
+            <span class="skill-tag">Delta Lake</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">Streamlit</span>
+            <span class="skill-tag">dbt</span>
+            <span class="skill-tag">Polars</span>
+            <span class="skill-tag">DuckDB</span>
+            <span class="skill-tag">Gemini AI</span>
+            <span class="skill-tag">RAG</span>
+            <span class="skill-tag">GitHub Actions</span>
         </div>
     </div>
     """,
@@ -55,7 +54,6 @@ def render(fct_orders):
         <div class="skill-card" style="text-align: center; padding: 2rem;">
             <div style="font-size: 4rem; margin-bottom: 1rem;">👨‍💻</div>
             <h3 style="color: white; margin: 0;">Mohith Akash</h3>
-            <p style="color: #a855f7; margin: 0.5rem 0; font-size: 0.9rem;">Analytics Engineer | Data Engineer</p>
         </div>
         """,
             unsafe_allow_html=True,
