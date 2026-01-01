@@ -152,7 +152,10 @@ def render(fct_orders, dim_customers, dim_sellers):
 
         monthly = fct_orders.copy()
         monthly["month"] = (
-            monthly["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
+            monthly["order_purchase_timestamp"]
+            .dt.tz_localize(None)
+            .dt.to_period("M")
+            .astype(str)
         )
         m_agg = monthly.groupby("month")["total_order_value"].sum().reset_index()
 
@@ -323,8 +326,8 @@ def render(fct_orders, dim_customers, dim_sellers):
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔧</div>
             <h4 style="color: white; margin: 0;">Data Engineering</h4>
             <div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">
-                <span class="skill-tag">dbt</span>
-                <span class="skill-tag">ETL</span>
+                <span class="skill-tag">Databricks</span>
+                <span class="skill-tag">Delta Lake</span>
             </div>
         </div>
         """,

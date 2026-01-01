@@ -30,7 +30,7 @@ def _fetch_table(cursor, table_name: str) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=columns)
 
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=None)  # Infinite cache - Olist data is static/historical
 def load_data():
     """Load all dimension and fact tables from Databricks Gold layer."""
     conn = get_connection()
