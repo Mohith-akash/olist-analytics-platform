@@ -39,15 +39,24 @@ def render(fct_orders):
         unsafe_allow_html=True,
     )
 
-    # Tech Evolution box
+    # Tech Evolution box - Timeline style
     st.markdown(
         """
-    <div class="chart-card" style="margin-top: 1rem; border-left: 3px solid #a855f7;">
-        <div class="chart-header">📈 Tech Evolution</div>
-        <p style="color: #888; margin: 0.5rem 0; font-size: 0.9rem;">
-            <strong>v1.0</strong> → dbt + MotherDuck (DuckDB) &nbsp;→&nbsp; 
-            <strong>v2.0</strong> → Databricks + Delta Lake (Lakehouse)
-        </p>
+    <div class="chart-card" style="margin-top: 1rem; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);">
+        <div class="chart-header" style="margin-bottom: 1rem;">📈 Tech Evolution</div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <div style="text-align: center; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <div style="font-size: 1.5rem;">🦆</div>
+                <div style="color: #FFC107; font-weight: 600; font-size: 0.85rem;">v1.0</div>
+                <div style="color: #888; font-size: 0.75rem;">dbt + MotherDuck</div>
+            </div>
+            <div style="color: #a855f7; font-size: 1.5rem;">→</div>
+            <div style="text-align: center; padding: 0.75rem 1rem; background: linear-gradient(135deg, rgba(255, 54, 33, 0.2), rgba(168, 85, 247, 0.2)); border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                <div style="font-size: 1.5rem;">🧱</div>
+                <div style="color: #a855f7; font-weight: 600; font-size: 0.85rem;">v2.0</div>
+                <div style="color: #fff; font-size: 0.75rem;">Databricks + Delta Lake</div>
+            </div>
+        </div>
     </div>
     """,
         unsafe_allow_html=True,
