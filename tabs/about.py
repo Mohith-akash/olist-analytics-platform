@@ -78,7 +78,7 @@ def render(fct_orders):
         <div class="chart-card">
             <div class="chart-header">End-to-End Data Pipeline</div>
             <p style="color: #888; margin: 0.5rem 0;">
-                Raw CSV files → Python ingestion → MotherDuck (Cloud DuckDB) → dbt transformations → Streamlit dashboard
+                Raw CSV files → Databricks (Delta Lake) → Medallion Architecture (Bronze/Silver/Gold) → Streamlit dashboard
             </p>
         </div>
         """,
@@ -94,9 +94,9 @@ def render(fct_orders):
             st.markdown(
                 """
             <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">🦆</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">MotherDuck</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">Cloud Data Warehouse</p>
+                <div style="font-size: 2rem;">🧱</div>
+                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">Databricks</p>
+                <p style="color: #888; font-size: 0.75rem; margin: 0;">Lakehouse Platform</p>
             </div>
             """,
                 unsafe_allow_html=True,
@@ -106,9 +106,9 @@ def render(fct_orders):
             st.markdown(
                 """
             <div class="skill-card" style="text-align: center;">
-                <div style="font-size: 2rem;">📊</div>
-                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">dbt Core</p>
-                <p style="color: #888; font-size: 0.75rem; margin: 0;">SQL Transformations</p>
+                <div style="font-size: 2rem;">🔷</div>
+                <p style="color: white; font-weight: 600; margin: 0.5rem 0;">Delta Lake</p>
+                <p style="color: #888; font-size: 0.75rem; margin: 0;">Storage Format</p>
             </div>
             """,
                 unsafe_allow_html=True,

@@ -13,7 +13,7 @@ def render(fct_orders, dim_customers, dim_sellers):
         """
     <div class="hero-header">
         <h1>🛒 Olist E-commerce Analytics Platform</h1>
-        <p>Brazilian marketplace data • 100K+ orders • 2016-2018 • Powered by dbt + MotherDuck</p>
+        <p>Brazilian marketplace data • 100K+ orders • 2016-2018 • Powered by Databricks + Delta Lake</p>
     </div>
     """,
         unsafe_allow_html=True,
@@ -368,8 +368,8 @@ def render(fct_orders, dim_customers, dim_sellers):
             <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">☁️</div>
             <h4 style="color: white; margin: 0;">Cloud</h4>
             <div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">
-                <span class="skill-tag">MotherDuck</span>
-                <span class="skill-tag">DuckDB</span>
+                <span class="skill-tag">Databricks</span>
+                <span class="skill-tag">Delta Lake</span>
             </div>
         </div>
         """,

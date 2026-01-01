@@ -2,16 +2,15 @@
 
 # 🛒 Olist E-commerce Analytics Platform
 
-### End-to-end data pipeline with dbt, MotherDuck & Streamlit
+### Lakehouse analytics with Databricks, Delta Lake & Streamlit
 
 [![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://olist-analytics-platform.streamlit.app/)
-[![dbt](https://img.shields.io/badge/dbt-Docs-FF694B?logo=dbt&logoColor=white)](https://mohith-akash.github.io/olist-analytics-platform/)
-[![CI](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml)
+[![Databricks](https://img.shields.io/badge/Databricks-Lakehouse-FF3621?logo=databricks&logoColor=white)](https://databricks.com)
+[![Delta Lake](https://img.shields.io/badge/Delta_Lake-Storage-00ADD8?logo=delta&logoColor=white)](https://delta.io)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
-[![MotherDuck](https://img.shields.io/badge/MotherDuck-DuckDB-FFC107?logo=duckdb&logoColor=black)](https://motherduck.com)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![CI](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml)
 
-**[Live Dashboard](https://olist-analytics-platform.streamlit.app/)** · **[dbt Docs](https://mohith-akash.github.io/olist-analytics-platform/)** · **[Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)**
+**[Live Dashboard](https://olist-analytics-platform.streamlit.app/)** · **[Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)**
 
 </div>
 
@@ -21,11 +20,11 @@
 
 A complete analytics platform analyzing **100,000+ orders** from Brazilian e-commerce marketplace Olist (2016-2018). Built to demonstrate:
 
-- **Data Engineering** - ETL pipelines, dimensional modeling
-- **SQL Expertise** - dbt transformations, CTEs, JOINs
-- **Data Visualization** - Interactive dashboards
-- **Cloud Warehousing** - MotherDuck (serverless DuckDB)
-- **CI/CD** - GitHub Actions for linting, testing & automated dbt docs deployment
+- **Lakehouse Architecture** - Databricks with Delta Lake storage
+- **Medallion Pattern** - Bronze → Silver → Gold data layers
+- **SQL Expertise** - Complex transformations, CTEs, JOINs
+- **Data Visualization** - Interactive Streamlit dashboard
+- **CI/CD** - GitHub Actions for linting and testing
 
 ---
 
@@ -37,19 +36,16 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 ### Charts & Analytics
 ![Dashboard Charts](docs/images/screenshot_charts.png)
 
-### Power BI Desktop
-![Power BI Dashboard](docs/images/dashboard_preview.png)
-
 ---
 
 ## 🛠️ Tech Stack
 
 <table>
 <tr>
-<td align="center"><img src="https://img.shields.io/badge/-MotherDuck-FFC107?style=for-the-badge&logo=duckdb&logoColor=black" /><br/>Cloud Warehouse</td>
-<td align="center"><img src="https://img.shields.io/badge/-dbt-FF694B?style=for-the-badge&logo=dbt&logoColor=white" /><br/>Transformations</td>
+<td align="center"><img src="https://img.shields.io/badge/-Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white" /><br/>Lakehouse Platform</td>
+<td align="center"><img src="https://img.shields.io/badge/-Delta_Lake-00ADD8?style=for-the-badge&logo=delta&logoColor=white" /><br/>Storage Format</td>
 <td align="center"><img src="https://img.shields.io/badge/-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" /><br/>Web Dashboard</td>
-<td align="center"><img src="https://img.shields.io/badge/-Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black" /><br/>Desktop BI</td>
+<td align="center"><img src="https://img.shields.io/badge/-Python-3776AB?style=for-the-badge&logo=python&logoColor=white" /><br/>Backend</td>
 </tr>
 </table>
 
@@ -58,23 +54,41 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 ## 🏗️ Architecture
 
 ```
-CSV Files → Python Ingestion → MotherDuck → dbt Transformations → Dashboards
-                                    │
-                           ┌────────┴────────┐
-                           │   Data Layers    │
-                           ├─────────────────┤
-                           │ raw_olist       │  9 source tables
-                           │ staging         │  8 stg_* models
-                           │ marts           │  4 business models
-                           └─────────────────┘
+                    ┌─────────────────────────────────────────────────────┐
+                    │              Databricks Lakehouse                   │
+                    │                                                     │
+CSV Files ─────────►│  ┌──────────┐   ┌──────────┐   ┌──────────────┐    │
+                    │  │  Bronze  │──►│  Silver  │──►│    Gold      │    │
+                    │  │  (raw)   │   │ (clean)  │   │ (analytics)  │    │
+                    │  │ 9 tables │   │ 7 tables │   │  4 tables    │    │
+                    │  └──────────┘   └──────────┘   └──────────────┘    │
+                    │                                       │            │
+                    │              Delta Lake Storage       │            │
+                    └───────────────────────────────────────┼────────────┘
+                                                            │
+                                                            ▼
+                                                    ┌──────────────┐
+                                                    │  Streamlit   │
+                                                    │  Dashboard   │
+                                                    └──────────────┘
 ```
 
-### Data Models
+### Medallion Architecture
 
-| Layer | Models |
-|-------|--------|
-| **Staging** | `stg_orders` · `stg_customers` · `stg_products` · `stg_sellers` · `stg_payments` · `stg_reviews` · `stg_order_items` · `stg_geolocation` |
-| **Marts** | `fct_orders` · `dim_customers` · `dim_products` · `dim_sellers` |
+| Layer | Tables | Description |
+|-------|--------|-------------|
+| **Bronze** | 9 tables | Raw data ingested from CSV files |
+| **Silver** | 7 tables | Cleaned, typed, and validated data |
+| **Gold** | 4 tables | Business-ready facts and dimensions |
+
+### Data Models (Gold Layer)
+
+| Model | Description |
+|-------|-------------|
+| `fct_orders` | Order facts with revenue metrics |
+| `dim_customers` | Customer dimension with segmentation |
+| `dim_products` | Product dimension with sales tiers |
+| `dim_sellers` | Seller dimension with performance ratings |
 
 ---
 
@@ -86,64 +100,27 @@ CSV Files → Python Ingestion → MotherDuck → dbt Transformations → Dashbo
 git clone https://github.com/Mohith-akash/olist-analytics-platform.git
 cd olist-analytics-platform
 
-# Create virtual environment
 python -m venv venv
 .\venv\Scripts\activate        # Windows
 source venv/bin/activate       # Mac/Linux
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Download the Dataset
+### 2. Configure Databricks Connection
 
-1. Download from [Kaggle: Brazilian E-commerce Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)
-2. Extract the ZIP file
-3. Place all CSV files in the `data/` folder:
+Create `.streamlit/secrets.toml`:
 
-```
-data/
-├── olist_customers_dataset.csv
-├── olist_orders_dataset.csv
-├── olist_order_items_dataset.csv
-├── olist_order_payments_dataset.csv
-├── olist_order_reviews_dataset.csv
-├── olist_products_dataset.csv
-├── olist_sellers_dataset.csv
-├── olist_geolocation_dataset.csv
-└── product_category_name_translation.csv
+```toml
+DATABRICKS_HOST = "your-workspace.cloud.databricks.com"
+DATABRICKS_HTTP_PATH = "/sql/1.0/warehouses/your-warehouse-id"
+DATABRICKS_TOKEN = "your-access-token"
 ```
 
-### 3. Load Data & Build Models
+### 3. Run the Dashboard
 
 ```bash
-# Set your MotherDuck token (get one at motherduck.com)
-export MOTHERDUCK_TOKEN=your_token_here  # Mac/Linux
-set MOTHERDUCK_TOKEN=your_token_here     # Windows
-
-# Load data to MotherDuck
-python scripts/ingest.py
-
-# Build dbt models
-cd olist_dbt
-pip install dbt-duckdb
-dbt deps
-dbt run
-dbt test
-```
-
-### 4. Run the Dashboard
-
-```bash
-cd ..
 streamlit run streamlit_app.py
-```
-
-### Optional: Setup Pre-commit Hooks
-
-```bash
-pip install pre-commit
-pre-commit install
 ```
 
 ---
@@ -153,24 +130,25 @@ pre-commit install
 ```
 olist_analytics_platform/
 ├── 📊 streamlit_app.py              # Dashboard entry point
-├── 📋 requirements.txt
+├── 📋 requirements.txt              # Python dependencies
 │
 ├── 📂 app/                          # Core modules
-│   ├── database.py                  # MotherDuck connection
-│   ├── styles.py                    # CSS injection
+│   ├── database.py                  # Databricks SQL connection
+│   ├── styles.py                    # CSS styling
 │   └── utils.py                     # Formatting utilities
-├── 📂 tabs/                         # Dashboard tab components
-│   ├── home.py, analytics.py, ...
-├── 📂 scripts/                      # Data ingestion scripts
-│   └── ingest.py
-├── 📂 reports/                      # Power BI reports
-│   └── OLIST E-commerce Dashboard.pbix
-├── 📂 docs/images/                  # Screenshots & images
-├── 📂 olist_dbt/                    # dbt project
-│   └── models/
-│       ├── staging/                 # 8 staging models
-│       └── marts/                   # 4 mart models
-└── 📂 .github/workflows/            # CI/CD pipelines
+│
+├── 📂 tabs/                         # Dashboard components
+│   ├── home.py                      # KPIs and overview
+│   ├── analytics.py                 # Analysis charts
+│   ├── query.py                     # Data explorer
+│   └── about.py                     # Project info
+│
+├── 📂 databricks/                   # SQL notebooks (reference)
+│   ├── 01_bronze_layer.sql
+│   ├── 02_silver_layer.sql
+│   └── 03_gold_layer.sql
+│
+└── 📂 docs/images/                  # Screenshots
 ```
 
 ---

@@ -1,27 +1,44 @@
 """
 Database connection and data loading for Olist Analytics
+Connects to Databricks SQL Warehouse (Free Edition)
 """
 
 import streamlit as st
-import duckdb
+from databricks import sql
 import os
+import pandas as pd
 
 
 @st.cache_resource
 def get_connection():
-    """Get cached connection to MotherDuck."""
-    token = os.getenv("MOTHERDUCK_TOKEN") or st.secrets.get("MOTHERDUCK_TOKEN", "")
-    if token:
-        return duckdb.connect(f"md:olist_analytics?motherduck_token={token}")
-    return duckdb.connect("md:olist_analytics")
+    """Get cached connection to Databricks SQL Warehouse."""
+    return sql.connect(
+        server_hostname=os.getenv("DATABRICKS_HOST") or st.secrets.get("DATABRICKS_HOST", ""),
+        http_path=os.getenv("DATABRICKS_HTTP_PATH") or st.secrets.get("DATABRICKS_HTTP_PATH", ""),
+        access_token=os.getenv("DATABRICKS_TOKEN") or st.secrets.get("DATABRICKS_TOKEN", "")
+    )
+
+
+def _fetch_table(cursor, table_name: str) -> pd.DataFrame:
+    """Helper to fetch a table as DataFrame."""
+    cursor.execute(f"SELECT * FROM olist_gold.{table_name}")
+    columns = [desc[0] for desc in cursor.description]
+    rows = cursor.fetchall()
+    return pd.DataFrame(rows, columns=columns)
 
 
 @st.cache_data(ttl=600)
 def load_data():
-    """Load all dimension and fact tables from the data warehouse."""
+    """Load all dimension and fact tables from Databricks Gold layer."""
     conn = get_connection()
-    fct_orders = conn.execute("SELECT * FROM dbt_main.fct_orders").df()
-    dim_customers = conn.execute("SELECT * FROM dbt_main.dim_customers").df()
-    dim_products = conn.execute("SELECT * FROM dbt_main.dim_products").df()
-    dim_sellers = conn.execute("SELECT * FROM dbt_main.dim_sellers").df()
+    cursor = conn.cursor()
+    
+    try:
+        fct_orders = _fetch_table(cursor, "fct_orders")
+        dim_customers = _fetch_table(cursor, "dim_customers")
+        dim_products = _fetch_table(cursor, "dim_products")
+        dim_sellers = _fetch_table(cursor, "dim_sellers")
+    finally:
+        cursor.close()
+    
     return fct_orders, dim_customers, dim_products, dim_sellers

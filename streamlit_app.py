@@ -22,7 +22,7 @@ st.set_page_config(
 # Inject custom CSS
 inject_css()
 
-# Load data from MotherDuck
+# Load data from Databricks
 try:
     fct_orders, dim_customers, dim_products, dim_sellers = load_data()
     fct_orders["order_purchase_timestamp"] = pd.to_datetime(
