@@ -6,7 +6,7 @@ import streamlit as st
 
 
 def render(fct_orders):
-    """Render the About tab with project info and contact details."""
+    """Render the About tab with project info."""
     st.markdown(
         """
     <div class="hero-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);">
@@ -17,122 +17,102 @@ def render(fct_orders):
         unsafe_allow_html=True,
     )
 
-    # Full-width tech stack at the top
-    st.markdown(
-        '<div class="section-title">🛠️ Tech Stack</div>',
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-    <div class="chart-card" style="padding: 1.5rem;">
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
-            <span class="skill-tag">Databricks</span>
-            <span class="skill-tag">Delta Lake</span>
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">SQL</span>
-            <span class="skill-tag">Streamlit</span>
-            <span class="skill-tag">GitHub Actions</span>
-        </div>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    # Tech Evolution box - Timeline style
-    st.markdown(
-        """
-    <div class="chart-card" style="margin-top: 1rem; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);">
-        <div class="chart-header" style="margin-bottom: 1rem;">📈 Tech Evolution</div>
-        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-            <div style="text-align: center; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
-                <div style="font-size: 1.5rem;">🦆</div>
-                <div style="color: #FFC107; font-weight: 600; font-size: 0.85rem;">v1.0</div>
-                <div style="color: #888; font-size: 0.75rem;">dbt + MotherDuck</div>
-            </div>
-            <div style="color: #a855f7; font-size: 1.5rem;">→</div>
-            <div style="text-align: center; padding: 0.75rem 1rem; background: linear-gradient(135deg, rgba(255, 54, 33, 0.2), rgba(168, 85, 247, 0.2)); border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3);">
-                <div style="font-size: 1.5rem;">🧱</div>
-                <div style="color: #a855f7; font-weight: 600; font-size: 0.85rem;">v2.0</div>
-                <div style="color: #fff; font-size: 0.75rem;">Databricks + Delta Lake</div>
-            </div>
-        </div>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("")  # Spacer
-
-    col1, col2 = st.columns([1, 2])
+    # Compact layout - everything in columns
+    col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            """
-        <div class="skill-card" style="text-align: center; padding: 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">👨‍💻</div>
-            <h3 style="color: white; margin: 0;">Mohith Akash</h3>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown("---")
-        st.markdown("#### 🔗 Connect")
-        st.markdown("📂 [GitHub](https://github.com/Mohith-Akash)")
-        st.markdown("💼 [LinkedIn](https://www.linkedin.com/in/mohith-akash/)")
-
-    with col2:
-        st.markdown(
-            '<div class="section-title">📊 About the Dataset</div>',
-            unsafe_allow_html=True,
-        )
-
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">Olist E-commerce Dataset</div>
-            <p style="color: #888; margin: 1rem 0;">
-                This is a <strong>public dataset</strong> from the Brazilian e-commerce platform Olist,
-                available on <a href="https://www.kaggle.com/olistbr/brazilian-ecommerce" target="_blank" style="color: #a855f7;">Kaggle</a>.
-            </p>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-        # Dataset stats
+        # Dataset info
         min_date = fct_orders["order_purchase_timestamp"].min().strftime("%b %Y")
         max_date = fct_orders["order_purchase_timestamp"].max().strftime("%b %Y")
 
-        col_a, col_b, col_c = st.columns(3)
-        col_a.metric("📅 Date Range", f"{min_date} - {max_date}")
-        col_b.metric("📦 Total Orders", f"{fct_orders['order_id'].nunique():,}")
-        col_c.metric("🗂️ Total Records", f"{len(fct_orders):,}")
-
         st.markdown(
-            '<div class="section-title">🏗️ Architecture</div>', unsafe_allow_html=True
+            f"""
+        <div class="chart-card">
+            <div class="chart-header">📊 Olist E-commerce Dataset</div>
+            <p style="color: #888; margin: 0.5rem 0; font-size: 0.9rem;">
+                Public dataset from Brazilian marketplace Olist
+                (<a href="https://www.kaggle.com/olistbr/brazilian-ecommerce" target="_blank" style="color: #a855f7;">Kaggle</a>)
+            </p>
+            <div style="display: flex; gap: 1.5rem; margin-top: 0.75rem;">
+                <div><span style="color: #888;">📅</span> <strong style="color: white;">{min_date} - {max_date}</strong></div>
+                <div><span style="color: #888;">📦</span> <strong style="color: white;">{fct_orders['order_id'].nunique():,}</strong> orders</div>
+                <div><span style="color: #888;">🗂️</span> <strong style="color: white;">{len(fct_orders):,}</strong> records</div>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
         )
 
+        # Tech Stack
+        st.markdown(
+            """
+        <div class="chart-card" style="margin-top: 1rem;">
+            <div class="chart-header">🛠️ Tech Stack</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem;">
+                <span class="skill-tag">Databricks</span>
+                <span class="skill-tag">Delta Lake</span>
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">SQL</span>
+                <span class="skill-tag">Streamlit</span>
+                <span class="skill-tag">GitHub Actions</span>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+    with col2:
+        # Architecture
         st.markdown(
             """
         <div class="chart-card">
-            <div class="chart-header">Lakehouse with Medallion Architecture</div>
-            <p style="color: #888; margin: 0.5rem 0;">
-                Raw CSV → <strong>Databricks</strong> → Bronze (raw) → Silver (clean) → Gold (analytics) → <strong>Streamlit</strong>
+            <div class="chart-header">🏗️ Lakehouse Architecture</div>
+            <p style="color: #888; margin: 0.5rem 0; font-size: 0.9rem;">
+                Raw CSV → <strong style="color: #a855f7;">Databricks</strong> → Bronze → Silver → Gold → <strong style="color: #a855f7;">Streamlit</strong>
             </p>
         </div>
         """,
             unsafe_allow_html=True,
         )
 
+        # Tech Evolution
+        st.markdown(
+            """
+        <div class="chart-card" style="margin-top: 1rem;">
+            <div class="chart-header">📈 Tech Evolution</div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem;">
+                <div style="text-align: center; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                    <div style="color: #FFC107; font-weight: 600; font-size: 0.8rem;">v1.0</div>
+                    <div style="color: #888; font-size: 0.7rem;">dbt + MotherDuck</div>
+                </div>
+                <div style="color: #a855f7;">→</div>
+                <div style="text-align: center; padding: 0.5rem 0.75rem; background: rgba(168, 85, 247, 0.15); border-radius: 6px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                    <div style="color: #a855f7; font-weight: 600; font-size: 0.8rem;">v2.0</div>
+                    <div style="color: #fff; font-size: 0.7rem;">Databricks + Delta Lake</div>
+                </div>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+        # Connect links
+        st.markdown(
+            """
+        <div class="chart-card" style="margin-top: 1rem;">
+            <div class="chart-header">🔗 Connect</div>
+            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                <a href="https://github.com/Mohith-Akash" target="_blank" style="color: #a855f7; text-decoration: none;">📂 GitHub</a>
+                <a href="https://www.linkedin.com/in/mohith-akash/" target="_blank" style="color: #a855f7; text-decoration: none;">💼 LinkedIn</a>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+    # Skills section - more compact
     st.markdown("---")
-
-    st.markdown(
-        '<div class="section-title">🎯 Skills Demonstrated</div>',
-        unsafe_allow_html=True,
-    )
-
+    
     skill_col1, skill_col2, skill_col3 = st.columns(3)
 
     with skill_col1:
@@ -140,12 +120,10 @@ def render(fct_orders):
             """
         <div class="chart-card">
             <div class="chart-header">🔧 Data Engineering</div>
-            <ul style="color: #888; margin: 1rem 0;">
+            <ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">
                 <li>Lakehouse architecture</li>
-                <li>Medallion pattern (Bronze/Silver/Gold)</li>
+                <li>Medallion pattern</li>
                 <li>Dimensional modeling</li>
-                <li>Data quality & testing</li>
-                <li>CI/CD pipelines</li>
             </ul>
         </div>
         """,
@@ -156,12 +134,11 @@ def render(fct_orders):
         st.markdown(
             """
         <div class="chart-card">
-            <div class="chart-header">📝 SQL & Transformations</div>
-            <ul style="color: #888; margin: 1rem 0;">
+            <div class="chart-header">📝 SQL</div>
+            <ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">
                 <li>Complex JOINs & CTEs</li>
                 <li>Window functions</li>
                 <li>Databricks SQL</li>
-                <li>Delta Lake operations</li>
             </ul>
         </div>
         """,
@@ -172,30 +149,13 @@ def render(fct_orders):
         st.markdown(
             """
         <div class="chart-card">
-            <div class="chart-header">📊 Analytics & AI</div>
-            <ul style="color: #888; margin: 1rem 0;">
+            <div class="chart-header">📊 Analytics</div>
+            <ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">
                 <li>Interactive dashboards</li>
                 <li>KPI design</li>
-                <li>Data storytelling</li>
                 <li>Plotly visualizations</li>
             </ul>
         </div>
         """,
             unsafe_allow_html=True,
         )
-
-    # Footer
-    st.markdown(
-        """
-    <div class="footer-box">
-        <h3 style="color: white; margin: 0;">🚀 Check Out My Other Projects</h3>
-        <p style="color: #888; margin: 0.75rem 0;">
-            GDELT News Analytics with Polars, RAG, and Gemini AI
-        </p>
-        <a href="https://github.com/Mohith-Akash" target="_blank" class="github-btn">
-            📂 View All Projects on GitHub
-        </a>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
