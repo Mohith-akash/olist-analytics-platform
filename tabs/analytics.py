@@ -39,7 +39,7 @@ def render(fct_orders, dim_customers, dim_sellers):
     )
 
     monthly = df.copy()
-    monthly["month"] = monthly["order_purchase_timestamp"].dt.to_period("M").astype(str)
+    monthly["month"] = monthly["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
     m_agg = (
         monthly.groupby("month")
         .agg({"total_order_value": "sum", "order_id": "nunique"})

@@ -152,7 +152,7 @@ def render(fct_orders, dim_customers, dim_sellers):
 
         monthly = fct_orders.copy()
         monthly["month"] = (
-            monthly["order_purchase_timestamp"].dt.to_period("M").astype(str)
+            monthly["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
         )
         m_agg = monthly.groupby("month")["total_order_value"].sum().reset_index()
 

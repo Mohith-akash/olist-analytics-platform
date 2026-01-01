@@ -29,7 +29,7 @@ def render(fct_orders, dim_products, dim_customers):
         )
 
         fct_orders["month"] = (
-            fct_orders["order_purchase_timestamp"].dt.to_period("M").astype(str)
+            fct_orders["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
         )
         months = sorted(fct_orders["month"].unique().tolist())
         sel_month = st.selectbox("Select Month", months, index=len(months) - 1)
