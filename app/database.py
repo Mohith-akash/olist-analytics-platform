@@ -13,9 +13,12 @@ import pandas as pd
 def get_connection():
     """Get cached connection to Databricks SQL Warehouse."""
     return sql.connect(
-        server_hostname=os.getenv("DATABRICKS_HOST") or st.secrets.get("DATABRICKS_HOST", ""),
-        http_path=os.getenv("DATABRICKS_HTTP_PATH") or st.secrets.get("DATABRICKS_HTTP_PATH", ""),
-        access_token=os.getenv("DATABRICKS_TOKEN") or st.secrets.get("DATABRICKS_TOKEN", "")
+        server_hostname=os.getenv("DATABRICKS_HOST")
+        or st.secrets.get("DATABRICKS_HOST", ""),
+        http_path=os.getenv("DATABRICKS_HTTP_PATH")
+        or st.secrets.get("DATABRICKS_HTTP_PATH", ""),
+        access_token=os.getenv("DATABRICKS_TOKEN")
+        or st.secrets.get("DATABRICKS_TOKEN", ""),
     )
 
 
@@ -32,7 +35,7 @@ def load_data():
     """Load all dimension and fact tables from Databricks Gold layer."""
     conn = get_connection()
     cursor = conn.cursor()
-    
+
     try:
         fct_orders = _fetch_table(cursor, "fct_orders")
         dim_customers = _fetch_table(cursor, "dim_customers")
@@ -40,5 +43,5 @@ def load_data():
         dim_sellers = _fetch_table(cursor, "dim_sellers")
     finally:
         cursor.close()
-    
+
     return fct_orders, dim_customers, dim_products, dim_sellers

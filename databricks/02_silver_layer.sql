@@ -39,7 +39,7 @@ SELECT
     p.product_height_cm,
     p.product_width_cm
 FROM olist_bronze.products p
-LEFT JOIN olist_bronze.category_translation t 
+LEFT JOIN olist_bronze.category_translation t
     ON p.product_category_name = t.product_category_name
 WHERE p.product_id IS NOT NULL;
 

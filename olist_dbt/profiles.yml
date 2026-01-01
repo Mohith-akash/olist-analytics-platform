@@ -1,8 +1,0 @@
-olist_dbt:
-  target: dev
-  outputs:
-    dev:
-      type: duckdb
-      path: 'md:olist_analytics'
-      schema: dbt_main  # Changed to 'dbt_main' to keep it clean
-      threads: 4

@@ -6,5 +6,5 @@
 CREATE SCHEMA IF NOT EXISTS olist_bronze;
 
 -- Create Delta tables from uploaded CSVs
--- Tables: customers, orders, products, sellers, order_items, 
+-- Tables: customers, orders, products, sellers, order_items,
 --         order_payments, order_reviews, geolocation, category_translation
