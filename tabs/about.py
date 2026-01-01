@@ -32,13 +32,22 @@ def render(fct_orders):
             <span class="skill-tag">Python</span>
             <span class="skill-tag">SQL</span>
             <span class="skill-tag">Streamlit</span>
-            <span class="skill-tag">dbt</span>
-            <span class="skill-tag">Polars</span>
-            <span class="skill-tag">DuckDB</span>
-            <span class="skill-tag">Gemini AI</span>
-            <span class="skill-tag">RAG</span>
             <span class="skill-tag">GitHub Actions</span>
         </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    # Tech Evolution box
+    st.markdown(
+        """
+    <div class="chart-card" style="margin-top: 1rem; border-left: 3px solid #a855f7;">
+        <div class="chart-header">📈 Tech Evolution</div>
+        <p style="color: #888; margin: 0.5rem 0; font-size: 0.9rem;">
+            <strong>v1.0</strong> → dbt + MotherDuck (DuckDB) &nbsp;→&nbsp; 
+            <strong>v2.0</strong> → Databricks + Delta Lake (Lakehouse)
+        </p>
     </div>
     """,
         unsafe_allow_html=True,
