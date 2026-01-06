@@ -3,8 +3,7 @@ name: Keep App Alive
 on:
   schedule:
     # Run every 12 hours to prevent Streamlit Cloud from sleeping
-    # Streamlit Cloud apps sleep after ~7 days of inactivity
-    - cron: '0 */12 * * *'  # At minute 0 of every 12th hour
+    - cron: '0 */12 * * *'
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
@@ -16,34 +15,24 @@ jobs:
         run: |
           echo "🔄 Waking up Streamlit Cloud app..."
 
-          # First request - wake up the app (may timeout, that's expected)
+          # Replace with your actual Streamlit app URL
+          APP_URL="https://olist-analytics-platform.streamlit.app"
+
+          # First request - wake up the app
           curl -sSf --max-time 120 \
             -H "User-Agent: GitHub-Actions-KeepAlive" \
             -o /dev/null \
-            "${{ secrets.STREAMLIT_APP_URL }}" || echo "Initial wake-up request sent (timeout expected)"
+            "$APP_URL" || echo "Initial wake-up request sent"
 
-          # Wait for app to fully spin up
+          # Wait for app to spin up
           echo "⏳ Waiting 30 seconds for app to initialize..."
           sleep 30
 
-          # Second request - verify app is responding
+          # Verify app is responding
           echo "✅ Verifying app is awake..."
-          HTTP_STATUS=$(curl -sSf --max-time 60 \
+          curl -sSf --max-time 60 \
             -H "User-Agent: GitHub-Actions-KeepAlive" \
-            -w "%{http_code}" \
             -o /dev/null \
-            "${{ secrets.STREAMLIT_APP_URL }}" || echo "000")
+            "$APP_URL" && echo "✅ App is awake!" || echo "⚠️ App may still be warming up"
 
-          if [ "$HTTP_STATUS" = "200" ]; then
-            echo "✅ App is awake and responding (HTTP $HTTP_STATUS)"
-          else
-            echo "⚠️ App responded with HTTP $HTTP_STATUS (may still be waking up)"
-          fi
-
-          echo "🎉 Keep-alive job completed at $(date -u)"
-
-      - name: Notify on failure
-        if: failure()
-        run: |
-          echo "❌ Failed to wake up the Streamlit app"
-          echo "Please check if STREAMLIT_APP_URL secret is configured correctly"
+          echo "🎉 Keep-alive completed at $(date -u)"
