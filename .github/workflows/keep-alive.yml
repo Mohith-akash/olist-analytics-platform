@@ -3,7 +3,7 @@ name: Keep App Alive
 on:
   schedule:
     # Run every 12 hours to prevent Streamlit Cloud from sleeping
-    - cron: '0 */12 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
