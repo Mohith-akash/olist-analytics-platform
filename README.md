@@ -133,6 +133,7 @@ olist_analytics_platform/
 ├── 📋 requirements.txt              # Python dependencies
 │
 ├── 📂 app/                          # Core modules
+│   ├── components.py                # Reusable UI helpers
 │   ├── database.py                  # Databricks SQL connection
 │   ├── styles.py                    # CSS styling
 │   └── utils.py                     # Formatting utilities
