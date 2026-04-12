@@ -3,19 +3,17 @@ Query Data tab component
 """
 
 import streamlit as st
+
+from app.components import render_hero_header, render_section_title
 from app.utils import fmt_curr
 
 
 def render(fct_orders, dim_products, dim_customers):
     """Render the Query Data tab with filter and download options."""
-    st.markdown(
-        """
-    <div class="hero-header" style="background: linear-gradient(135deg, #f97316 0%, #f59e0b 50%, #eab308 100%);">
-        <h1>🔍 Query Data</h1>
-        <p>Filter specific data and download as CSV</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
+    render_hero_header(
+        "🔍 Query Data",
+        "Filter specific data and download as CSV",
+        "135deg, #f97316 0%, #f59e0b 50%, #eab308 100%",
     )
 
     query_tab1, query_tab2, query_tab3 = st.tabs(
@@ -23,10 +21,7 @@ def render(fct_orders, dim_products, dim_customers):
     )
 
     with query_tab1:
-        st.markdown(
-            '<div class="section-title">📅 Orders by Month</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("📅 Orders by Month")
 
         fct_orders["month"] = (
             fct_orders["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
@@ -35,13 +30,7 @@ def render(fct_orders, dim_products, dim_customers):
         sel_month = st.selectbox("Select Month", months, index=len(months) - 1)
 
         month_data = fct_orders[fct_orders["month"] == sel_month][
-            [
-                "order_id",
-                "customer_id",
-                "product_category_name",
-                "price",
-                "total_order_value",
-            ]
+            ["order_id", "customer_id", "product_category_name", "price", "total_order_value"]
         ].copy()
 
         col1, col2, col3 = st.columns(3)
@@ -53,31 +42,17 @@ def render(fct_orders, dim_products, dim_customers):
 
         csv = month_data.to_csv(index=False)
         st.download_button(
-            f"📥 Download {len(month_data):,} orders",
-            csv,
-            f"orders_{sel_month}.csv",
-            "text/csv",
+            f"📥 Download {len(month_data):,} orders", csv, f"orders_{sel_month}.csv", "text/csv"
         )
 
     with query_tab2:
-        st.markdown(
-            '<div class="section-title">🏷️ Products by Category</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("🏷️ Products by Category")
 
-        categories = sorted(
-            dim_products["product_category_name"].dropna().unique().tolist()
-        )
+        categories = sorted(dim_products["product_category_name"].dropna().unique().tolist())
         sel_cat_q = st.selectbox("Select Category", categories, key="cat_query")
 
         cat_data = dim_products[dim_products["product_category_name"] == sel_cat_q][
-            [
-                "product_id",
-                "product_category_name",
-                "times_sold",
-                "total_revenue",
-                "sales_tier",
-            ]
+            ["product_id", "product_category_name", "times_sold", "total_revenue", "sales_tier"]
         ].copy()
 
         col1, col2, col3 = st.columns(3)
@@ -97,23 +72,13 @@ def render(fct_orders, dim_products, dim_customers):
         )
 
     with query_tab3:
-        st.markdown(
-            '<div class="section-title">👥 Customers by State</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("👥 Customers by State")
 
         states = sorted(dim_customers["state"].dropna().unique().tolist())
         sel_state = st.selectbox("Select State", states)
 
         state_data = dim_customers[dim_customers["state"] == sel_state][
-            [
-                "customer_unique_id",
-                "city",
-                "state",
-                "total_orders",
-                "lifetime_value",
-                "customer_type",
-            ]
+            ["customer_unique_id", "city", "state", "total_orders", "lifetime_value", "customer_type"]
         ].copy()
 
         col1, col2, col3 = st.columns(3)

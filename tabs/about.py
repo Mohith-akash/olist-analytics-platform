@@ -4,17 +4,15 @@ About tab component
 
 import streamlit as st
 
+from app.components import render_hero_header
+
 
 def render(fct_orders):
     """Render the About tab with project info."""
-    st.markdown(
-        """
-    <div class="hero-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);">
-        <h1>👤 About This Project</h1>
-        <p>Portfolio piece demonstrating modern data engineering skills</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
+    render_hero_header(
+        "👤 About This Project",
+        "Portfolio piece demonstrating modern data engineering skills",
+        "135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%",
     )
 
     # Compact layout - everything in columns
@@ -110,52 +108,20 @@ def render(fct_orders):
             unsafe_allow_html=True,
         )
 
-    # Skills section - more compact
+    # Skills section
     st.markdown("---")
-    
-    skill_col1, skill_col2, skill_col3 = st.columns(3)
 
-    with skill_col1:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">🔧 Data Engineering</div>
-            <ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">
-                <li>Lakehouse architecture</li>
-                <li>Medallion pattern</li>
-                <li>Dimensional modeling</li>
-            </ul>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with skill_col2:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">📝 SQL</div>
-            <ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">
-                <li>Complex JOINs & CTEs</li>
-                <li>Window functions</li>
-                <li>Databricks SQL</li>
-            </ul>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with skill_col3:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">📊 Analytics</div>
-            <ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">
-                <li>Interactive dashboards</li>
-                <li>KPI design</li>
-                <li>Plotly visualizations</li>
-            </ul>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+    skill_data = [
+        ("🔧 Data Engineering", ["Lakehouse architecture", "Medallion pattern", "Dimensional modeling"]),
+        ("📝 SQL", ["Complex JOINs & CTEs", "Window functions", "Databricks SQL"]),
+        ("📊 Analytics", ["Interactive dashboards", "KPI design", "Plotly visualizations"]),
+    ]
+    for col, (header, items) in zip(st.columns(3), skill_data):
+        with col:
+            items_html = "".join(f"<li>{i}</li>" for i in items)
+            st.markdown(
+                f'<div class="chart-card"><div class="chart-header">{header}</div>'
+                f'<ul style="color: #888; margin: 0.5rem 0; padding-left: 1.2rem; font-size: 0.85rem;">'
+                f"{items_html}</ul></div>",
+                unsafe_allow_html=True,
+            )

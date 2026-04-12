@@ -2,22 +2,20 @@
 Analytics tab component
 """
 
-import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import streamlit as st
 from plotly.subplots import make_subplots
+
+from app.components import render_hero_header, render_section_title
 
 
 def render(fct_orders, dim_customers, dim_sellers):
     """Render the Analytics tab with interactive charts."""
-    st.markdown(
-        """
-    <div class="hero-header" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #3b82f6 100%);">
-        <h1>📊 Analytics Dashboard</h1>
-        <p>Interactive charts with filters for deep analysis</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
+    render_hero_header(
+        "📊 Analytics Dashboard",
+        "Interactive charts with filters for deep analysis",
+        "135deg, #10b981 0%, #06b6d4 50%, #3b82f6 100%",
     )
 
     # Filter
@@ -33,10 +31,7 @@ def render(fct_orders, dim_customers, dim_sellers):
         df = df[df["product_category_name"] == sel_cat]
 
     # Revenue Chart
-    st.markdown(
-        '<div class="section-title">📈 Revenue & Orders Over Time</div>',
-        unsafe_allow_html=True,
-    )
+    render_section_title("📈 Revenue & Orders Over Time")
 
     monthly = df.copy()
     monthly["month"] = monthly["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
@@ -70,7 +65,6 @@ def render(fct_orders, dim_customers, dim_sellers):
         ),
         secondary_y=True,
     )
-
     fig.update_layout(
         height=350,
         paper_bgcolor="rgba(0,0,0,0)",
@@ -91,11 +85,7 @@ def render(fct_orders, dim_customers, dim_sellers):
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            '<div class="section-title">📍 Customers by State</div>',
-            unsafe_allow_html=True,
-        )
-        # Filter customers based on orders in the filtered dataset
+        render_section_title("📍 Customers by State")
         filtered_customer_ids = df["customer_id"].unique()
         filtered_customers = dim_customers[
             dim_customers["customer_id"].isin(filtered_customer_ids)
@@ -128,10 +118,7 @@ def render(fct_orders, dim_customers, dim_sellers):
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     with col2:
-        st.markdown(
-            '<div class="section-title">⭐ Seller Performance Tiers</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("⭐ Seller Performance Tiers")
         # Note: Seller data shown for all categories (seller_id not in fct_orders)
         tier_data = dim_sellers.groupby("seller_tier").size().reset_index(name="Count")
         tier_order = ["Platinum", "Gold", "Silver", "Bronze"]

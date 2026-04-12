@@ -2,21 +2,18 @@
 Home tab component
 """
 
-import streamlit as st
 import plotly.graph_objects as go
+import streamlit as st
+
+from app.components import render_chart_card, render_hero_header, render_section_title
 from app.utils import fmt_curr, fmt_num
 
 
 def render(fct_orders, dim_customers, dim_sellers):
     """Render the Home tab with KPIs and overview charts."""
-    st.markdown(
-        """
-    <div class="hero-header">
-        <h1>🛒 Olist E-commerce Analytics Platform</h1>
-        <p>Brazilian marketplace data • 100K+ orders • 2016-2018 • Powered by Databricks + Delta Lake</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
+    render_hero_header(
+        "🛒 Olist E-commerce Analytics Platform",
+        "Brazilian marketplace data • 100K+ orders • 2016-2018 • Powered by Databricks + Delta Lake",
     )
 
     # Calculate metrics
@@ -73,10 +70,7 @@ def render(fct_orders, dim_customers, dim_sellers):
     )
 
     # Key Insights Section
-    st.markdown(
-        '<div class="section-title">💡 Key Insights from the Data</div>',
-        unsafe_allow_html=True,
-    )
+    render_section_title("💡 Key Insights from the Data")
 
     top_category = (
         fct_orders.groupby("product_category_name")["total_order_value"].sum().idxmax()
@@ -85,70 +79,32 @@ def render(fct_orders, dim_customers, dim_sellers):
         fct_orders.groupby("product_category_name")["total_order_value"].sum().max()
     )
     top_state = dim_customers["state"].value_counts().idxmax()
-    top_state_pct = (
-        dim_customers["state"].value_counts().max() / len(dim_customers) * 100
-    )
+    top_state_pct = dim_customers["state"].value_counts().max() / len(dim_customers) * 100
     platinum_sellers = (dim_sellers["seller_tier"] == "Platinum").sum()
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown(
-            f"""
-        <div class="chart-card" style="border-left: 4px solid #10b981;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏆</div>
-            <div class="chart-header">Top Category</div>
-            <p style="color: #10b981; font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0;">{top_category}</p>
-            <p style="color: #888; font-size: 0.85rem; margin: 0;">Generated {fmt_curr(top_category_rev)} in revenue</p>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col2:
-        st.markdown(
-            f"""
-        <div class="chart-card" style="border-left: 4px solid #3b82f6;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📍</div>
-            <div class="chart-header">Top Market</div>
-            <p style="color: #3b82f6; font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0;">{top_state} (São Paulo)</p>
-            <p style="color: #888; font-size: 0.85rem; margin: 0;">{top_state_pct:.1f}% of all customers</p>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col3:
-        st.markdown(
-            f"""
-        <div class="chart-card" style="border-left: 4px solid #a855f7;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⭐</div>
-            <div class="chart-header">Platinum Sellers</div>
-            <p style="color: #a855f7; font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0;">{platinum_sellers} sellers</p>
-            <p style="color: #888; font-size: 0.85rem; margin: 0;">Top-tier performers with 4.5+ rating</p>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+    insights = [
+        ("#10b981", "🏆", "Top Category", top_category, f"Generated {fmt_curr(top_category_rev)} in revenue"),
+        ("#3b82f6", "📍", "Top Market", f"{top_state} (São Paulo)", f"{top_state_pct:.1f}% of all customers"),
+        ("#a855f7", "⭐", "Platinum Sellers", f"{platinum_sellers} sellers", "Top-tier performers with 4.5+ rating"),
+    ]
+    for col, (color, emoji, header, value, sub) in zip(st.columns(3), insights):
+        with col:
+            st.markdown(
+                f'<div class="chart-card" style="border-left: 4px solid {color};">'
+                f'<div style="font-size: 2rem; margin-bottom: 0.5rem;">{emoji}</div>'
+                f'<div class="chart-header">{header}</div>'
+                f'<p style="color: {color}; font-size: 1.1rem; font-weight: 700; margin: 0.5rem 0;">{value}</p>'
+                f'<p style="color: #888; font-size: 0.85rem; margin: 0;">{sub}</p></div>',
+                unsafe_allow_html=True,
+            )
 
     # Charts Row
-    st.markdown(
-        '<div class="section-title">📈 Performance Overview</div>',
-        unsafe_allow_html=True,
-    )
+    render_section_title("📈 Performance Overview")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">📈 Monthly Revenue Growth</div>
-            <div class="chart-desc">Revenue trend showing marketplace growth</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        render_chart_card("📈 Monthly Revenue Growth", "Revenue trend showing marketplace growth")
 
         monthly = fct_orders.copy()
         monthly["month"] = (
@@ -174,26 +130,14 @@ def render(fct_orders, dim_customers, dim_sellers):
             height=300,
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(
-                tickfont=dict(color="#888", size=9), gridcolor="rgba(255,255,255,0.05)"
-            ),
-            yaxis=dict(
-                gridcolor="rgba(255,255,255,0.05)", tickfont=dict(color="#888", size=9)
-            ),
+            xaxis=dict(tickfont=dict(color="#888", size=9), gridcolor="rgba(255,255,255,0.05)"),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.05)", tickfont=dict(color="#888", size=9)),
             margin=dict(t=10, b=40, l=50, r=10),
         )
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     with col2:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">⭐ Seller Rating Distribution</div>
-            <div class="chart-desc">How sellers are rated by customers</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        render_chart_card("⭐ Seller Rating Distribution", "How sellers are rated by customers")
 
         fig = go.Figure(
             go.Indicator(
@@ -234,15 +178,7 @@ def render(fct_orders, dim_customers, dim_sellers):
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">🏆 Top 5 Categories</div>
-            <div class="chart-desc">Highest revenue product categories</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        render_chart_card("🏆 Top 5 Categories", "Highest revenue product categories")
 
         cat_data = (
             fct_orders.groupby("product_category_name")["total_order_value"]
@@ -277,15 +213,7 @@ def render(fct_orders, dim_customers, dim_sellers):
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     with col2:
-        st.markdown(
-            """
-        <div class="chart-card">
-            <div class="chart-header">📍 Customer Distribution</div>
-            <div class="chart-desc">Top 5 states by customer count</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        render_chart_card("📍 Customer Distribution", "Top 5 states by customer count")
 
         state_data = dim_customers["state"].value_counts().head(5).reset_index()
         state_data.columns = ["State", "Count"]
@@ -312,72 +240,25 @@ def render(fct_orders, dim_customers, dim_sellers):
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     # Skills Section
-    st.markdown(
-        '<div class="section-title">🎯 Technical Skills Demonstrated</div>',
-        unsafe_allow_html=True,
-    )
+    render_section_title("🎯 Technical Skills Demonstrated")
 
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.markdown(
-            """
-        <div class="skill-card" style="text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔧</div>
-            <h4 style="color: white; margin: 0;">Data Engineering</h4>
-            <div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">
-                <span class="skill-tag">Databricks</span>
-                <span class="skill-tag">Delta Lake</span>
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col2:
-        st.markdown(
-            """
-        <div class="skill-card" style="text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📝</div>
-            <h4 style="color: white; margin: 0;">SQL</h4>
-            <div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">
-                <span class="skill-tag">CTEs</span>
-                <span class="skill-tag">JOINs</span>
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col3:
-        st.markdown(
-            """
-        <div class="skill-card" style="text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🐍</div>
-            <h4 style="color: white; margin: 0;">Python</h4>
-            <div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">
-                <span class="skill-tag">Pandas</span>
-                <span class="skill-tag">Plotly</span>
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col4:
-        st.markdown(
-            """
-        <div class="skill-card" style="text-align: center;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">☁️</div>
-            <h4 style="color: white; margin: 0;">Cloud</h4>
-            <div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">
-                <span class="skill-tag">Databricks</span>
-                <span class="skill-tag">Delta Lake</span>
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+    skill_cards = [
+        ("🔧", "Data Engineering", ["Databricks", "Delta Lake"]),
+        ("📝", "SQL", ["CTEs", "JOINs"]),
+        ("🐍", "Python", ["Pandas", "Plotly"]),
+        ("☁️", "Cloud", ["Databricks", "Delta Lake"]),
+    ]
+    for col, (emoji, title, tags) in zip(st.columns(4), skill_cards):
+        with col:
+            tags_html = "".join(f'<span class="skill-tag">{t}</span>' for t in tags)
+            st.markdown(
+                f'<div class="skill-card" style="text-align: center;">'
+                f'<div style="font-size: 2.5rem; margin-bottom: 0.5rem;">{emoji}</div>'
+                f'<h4 style="color: white; margin: 0;">{title}</h4>'
+                f'<div class="skill-tags" style="justify-content: center; margin-top: 0.75rem;">{tags_html}</div>'
+                f"</div>",
+                unsafe_allow_html=True,
+            )
 
     # Footer
     st.markdown(

@@ -4,17 +4,15 @@ Data Engineering tab component
 
 import streamlit as st
 
+from app.components import render_hero_header, render_section_title
+
 
 def render():
     """Render the Data Engineering tab with architecture and SQL examples."""
-    st.markdown(
-        """
-    <div class="hero-header" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);">
-        <h1>🔧 Data Engineering</h1>
-        <p>SQL transformations, Delta Lake, and dimensional modeling</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
+    render_hero_header(
+        "🔧 Data Engineering",
+        "SQL transformations, Delta Lake, and dimensional modeling",
+        "135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%",
     )
 
     eng_tab1, eng_tab2, eng_tab3 = st.tabs(
@@ -22,10 +20,7 @@ def render():
     )
 
     with eng_tab1:
-        st.markdown(
-            '<div class="section-title">📐 Data Model Architecture</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("📐 Data Model Architecture")
 
         st.markdown(
             """
@@ -36,48 +31,20 @@ def render():
             unsafe_allow_html=True,
         )
 
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.markdown(
-                """
-            <div class="skill-card">
-                <h4>📥 Sources</h4>
-                <p style="color: #888;">Raw CSV data from Olist</p>
-                <div class="skill-tags">
-                    <span class="skill-tag">9 tables</span>
-                </div>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-        with col2:
-            st.markdown(
-                """
-            <div class="skill-card">
-                <h4>🔄 Silver</h4>
-                <p style="color: #888;">Cleaned & typed data</p>
-                <div class="skill-tags">
-                    <span class="skill-tag">orders</span>
-                    <span class="skill-tag">customers</span>
-                </div>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
-        with col3:
-            st.markdown(
-                """
-            <div class="skill-card">
-                <h4>📊 Gold</h4>
-                <p style="color: #888;">Business-ready analytics</p>
-                <div class="skill-tags">
-                    <span class="skill-tag">fct_orders</span>
-                    <span class="skill-tag">dim_customers</span>
-                </div>
-            </div>
-            """,
-                unsafe_allow_html=True,
-            )
+        arch_tiers = [
+            ("📥 Sources", "Raw CSV data from Olist", ["9 tables"]),
+            ("🔄 Silver", "Cleaned & typed data", ["orders", "customers"]),
+            ("📊 Gold", "Business-ready analytics", ["fct_orders", "dim_customers"]),
+        ]
+        for col, (title, desc, tags) in zip(st.columns(3), arch_tiers):
+            with col:
+                tags_html = "".join(f'<span class="skill-tag">{t}</span>' for t in tags)
+                st.markdown(
+                    f'<div class="skill-card"><h4>{title}</h4>'
+                    f'<p style="color: #888;">{desc}</p>'
+                    f'<div class="skill-tags">{tags_html}</div></div>',
+                    unsafe_allow_html=True,
+                )
 
         st.markdown("### 🛠️ SQL Skills Demonstrated")
         st.markdown(
@@ -97,10 +64,7 @@ def render():
         )
 
     with eng_tab2:
-        st.markdown(
-            '<div class="section-title">📝 fct_orders.sql - Fact Table</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("📝 fct_orders.sql - Fact Table")
         st.markdown("*Multi-table JOIN with calculated `total_order_value`*")
 
         st.code(
@@ -122,10 +86,7 @@ LEFT JOIN olist_silver.products p ON oi.product_id = p.product_id;""",
         )
 
     with eng_tab3:
-        st.markdown(
-            '<div class="section-title">📝 dim_customers.sql - Customer Dimension</div>',
-            unsafe_allow_html=True,
-        )
+        render_section_title("📝 dim_customers.sql - Customer Dimension")
         st.markdown("*LTV calculation, aggregations, and CASE-based segmentation*")
 
         st.code(
