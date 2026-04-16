@@ -24,13 +24,22 @@ def render(fct_orders, dim_products, dim_customers):
         render_section_title("📅 Orders by Month")
 
         fct_orders["month"] = (
-            fct_orders["order_purchase_timestamp"].dt.tz_localize(None).dt.to_period("M").astype(str)
+            fct_orders["order_purchase_timestamp"]
+            .dt.tz_localize(None)
+            .dt.to_period("M")
+            .astype(str)
         )
         months = sorted(fct_orders["month"].unique().tolist())
         sel_month = st.selectbox("Select Month", months, index=len(months) - 1)
 
         month_data = fct_orders[fct_orders["month"] == sel_month][
-            ["order_id", "customer_id", "product_category_name", "price", "total_order_value"]
+            [
+                "order_id",
+                "customer_id",
+                "product_category_name",
+                "price",
+                "total_order_value",
+            ]
         ].copy()
 
         col1, col2, col3 = st.columns(3)
@@ -42,17 +51,28 @@ def render(fct_orders, dim_products, dim_customers):
 
         csv = month_data.to_csv(index=False)
         st.download_button(
-            f"📥 Download {len(month_data):,} orders", csv, f"orders_{sel_month}.csv", "text/csv"
+            f"📥 Download {len(month_data):,} orders",
+            csv,
+            f"orders_{sel_month}.csv",
+            "text/csv",
         )
 
     with query_tab2:
         render_section_title("🏷️ Products by Category")
 
-        categories = sorted(dim_products["product_category_name"].dropna().unique().tolist())
+        categories = sorted(
+            dim_products["product_category_name"].dropna().unique().tolist()
+        )
         sel_cat_q = st.selectbox("Select Category", categories, key="cat_query")
 
         cat_data = dim_products[dim_products["product_category_name"] == sel_cat_q][
-            ["product_id", "product_category_name", "times_sold", "total_revenue", "sales_tier"]
+            [
+                "product_id",
+                "product_category_name",
+                "times_sold",
+                "total_revenue",
+                "sales_tier",
+            ]
         ].copy()
 
         col1, col2, col3 = st.columns(3)
@@ -78,7 +98,14 @@ def render(fct_orders, dim_products, dim_customers):
         sel_state = st.selectbox("Select State", states)
 
         state_data = dim_customers[dim_customers["state"] == sel_state][
-            ["customer_unique_id", "city", "state", "total_orders", "lifetime_value", "customer_type"]
+            [
+                "customer_unique_id",
+                "city",
+                "state",
+                "total_orders",
+                "lifetime_value",
+                "customer_type",
+            ]
         ].copy()
 
         col1, col2, col3 = st.columns(3)

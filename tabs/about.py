@@ -33,7 +33,7 @@ def render(fct_orders):
             </p>
             <div style="display: flex; gap: 1.5rem; margin-top: 0.75rem;">
                 <div><span style="color: #888;">📅</span> <strong style="color: white;">{min_date} - {max_date}</strong></div>
-                <div><span style="color: #888;">📦</span> <strong style="color: white;">{fct_orders['order_id'].nunique():,}</strong> orders</div>
+                <div><span style="color: #888;">📦</span> <strong style="color: white;">{fct_orders["order_id"].nunique():,}</strong> orders</div>
                 <div><span style="color: #888;">🗂️</span> <strong style="color: white;">{len(fct_orders):,}</strong> records</div>
             </div>
         </div>
@@ -112,9 +112,15 @@ def render(fct_orders):
     st.markdown("---")
 
     skill_data = [
-        ("🔧 Data Engineering", ["Lakehouse architecture", "Medallion pattern", "Dimensional modeling"]),
+        (
+            "🔧 Data Engineering",
+            ["Lakehouse architecture", "Medallion pattern", "Dimensional modeling"],
+        ),
         ("📝 SQL", ["Complex JOINs & CTEs", "Window functions", "Databricks SQL"]),
-        ("📊 Analytics", ["Interactive dashboards", "KPI design", "Plotly visualizations"]),
+        (
+            "📊 Analytics",
+            ["Interactive dashboards", "KPI design", "Plotly visualizations"],
+        ),
     ]
     for col, (header, items) in zip(st.columns(3), skill_data):
         with col:

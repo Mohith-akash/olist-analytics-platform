@@ -79,13 +79,33 @@ def render(fct_orders, dim_customers, dim_sellers):
         fct_orders.groupby("product_category_name")["total_order_value"].sum().max()
     )
     top_state = dim_customers["state"].value_counts().idxmax()
-    top_state_pct = dim_customers["state"].value_counts().max() / len(dim_customers) * 100
+    top_state_pct = (
+        dim_customers["state"].value_counts().max() / len(dim_customers) * 100
+    )
     platinum_sellers = (dim_sellers["seller_tier"] == "Platinum").sum()
 
     insights = [
-        ("#10b981", "🏆", "Top Category", top_category, f"Generated {fmt_curr(top_category_rev)} in revenue"),
-        ("#3b82f6", "📍", "Top Market", f"{top_state} (São Paulo)", f"{top_state_pct:.1f}% of all customers"),
-        ("#a855f7", "⭐", "Platinum Sellers", f"{platinum_sellers} sellers", "Top-tier performers with 4.5+ rating"),
+        (
+            "#10b981",
+            "🏆",
+            "Top Category",
+            top_category,
+            f"Generated {fmt_curr(top_category_rev)} in revenue",
+        ),
+        (
+            "#3b82f6",
+            "📍",
+            "Top Market",
+            f"{top_state} (São Paulo)",
+            f"{top_state_pct:.1f}% of all customers",
+        ),
+        (
+            "#a855f7",
+            "⭐",
+            "Platinum Sellers",
+            f"{platinum_sellers} sellers",
+            "Top-tier performers with 4.5+ rating",
+        ),
     ]
     for col, (color, emoji, header, value, sub) in zip(st.columns(3), insights):
         with col:
@@ -104,7 +124,9 @@ def render(fct_orders, dim_customers, dim_sellers):
     col1, col2 = st.columns(2)
 
     with col1:
-        render_chart_card("📈 Monthly Revenue Growth", "Revenue trend showing marketplace growth")
+        render_chart_card(
+            "📈 Monthly Revenue Growth", "Revenue trend showing marketplace growth"
+        )
 
         monthly = fct_orders.copy()
         monthly["month"] = (
@@ -130,14 +152,20 @@ def render(fct_orders, dim_customers, dim_sellers):
             height=300,
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(tickfont=dict(color="#888", size=9), gridcolor="rgba(255,255,255,0.05)"),
-            yaxis=dict(gridcolor="rgba(255,255,255,0.05)", tickfont=dict(color="#888", size=9)),
+            xaxis=dict(
+                tickfont=dict(color="#888", size=9), gridcolor="rgba(255,255,255,0.05)"
+            ),
+            yaxis=dict(
+                gridcolor="rgba(255,255,255,0.05)", tickfont=dict(color="#888", size=9)
+            ),
             margin=dict(t=10, b=40, l=50, r=10),
         )
         st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
     with col2:
-        render_chart_card("⭐ Seller Rating Distribution", "How sellers are rated by customers")
+        render_chart_card(
+            "⭐ Seller Rating Distribution", "How sellers are rated by customers"
+        )
 
         fig = go.Figure(
             go.Indicator(
@@ -246,7 +274,7 @@ def render(fct_orders, dim_customers, dim_sellers):
         ("🔧", "Data Engineering", ["Databricks", "Delta Lake"]),
         ("📝", "SQL", ["CTEs", "JOINs"]),
         ("🐍", "Python", ["Pandas", "Plotly"]),
-        ("☁️", "Cloud", ["Databricks", "Delta Lake"]),
+        ("☁️", "Cloud", ["Streamlit Cloud", "GitHub Actions"]),
     ]
     for col, (emoji, title, tags) in zip(st.columns(4), skill_cards):
         with col:

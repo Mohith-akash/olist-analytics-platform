@@ -55,6 +55,7 @@ def render():
             <span class="skill-tag">Aggregations</span>
             <span class="skill-tag">CASE statements</span>
             <span class="skill-tag">Window functions</span>
+            <span class="skill-tag">DATEDIFF</span>
             <span class="skill-tag">COALESCE</span>
             <span class="skill-tag">Delta Lake</span>
             <span class="skill-tag">Medallion Architecture</span>
@@ -65,53 +66,79 @@ def render():
 
     with eng_tab2:
         render_section_title("📝 fct_orders.sql - Fact Table")
-        st.markdown("*Multi-table JOIN with calculated `total_order_value`*")
+        st.markdown("*CTE + multi-table JOIN + window function for order sequencing*")
 
         st.code(
             """-- fct_orders.sql (Gold Layer - Databricks SQL)
 CREATE OR REPLACE TABLE olist_gold.fct_orders AS
+WITH order_details AS (
+    SELECT
+        oi.order_id,
+        o.customer_id,
+        oi.product_id,
+        oi.seller_id,
+        o.order_purchase_date AS order_purchase_timestamp,
+        p.product_category AS product_category_name,
+        oi.price,
+        oi.freight_value,
+        (oi.price + oi.freight_value) AS total_order_value,
+        DATEDIFF(o.delivered_customer_date, o.order_purchase_date) AS delivery_days,
+        DATEDIFF(o.estimated_delivery_date, o.delivered_customer_date) AS delivery_delta_days
+    FROM olist_silver.order_items oi
+    LEFT JOIN olist_silver.orders o ON oi.order_id = o.order_id
+    LEFT JOIN olist_silver.products p ON oi.product_id = p.product_id
+)
 SELECT
-    oi.order_id,
-    o.customer_id,
-    oi.product_id,
-    o.order_purchase_date AS order_purchase_timestamp,
-    p.product_category AS product_category_name,
-    oi.price,
-    oi.freight_value,
-    (oi.price + oi.freight_value) AS total_order_value
-FROM olist_silver.order_items oi
-LEFT JOIN olist_silver.orders o ON oi.order_id = o.order_id
-LEFT JOIN olist_silver.products p ON oi.product_id = p.product_id;""",
+    *,
+    ROW_NUMBER() OVER (
+        PARTITION BY customer_id ORDER BY order_purchase_timestamp
+    ) AS customer_order_seq
+FROM order_details;""",
             language="sql",
         )
 
     with eng_tab3:
         render_section_title("📝 dim_customers.sql - Customer Dimension")
-        st.markdown("*LTV calculation, aggregations, and CASE-based segmentation*")
+        st.markdown(
+            "*CTE for lifetime metrics, DATEDIFF for lifespan, CASE segmentation*"
+        )
 
         st.code(
             """-- dim_customers.sql (Gold Layer - Databricks SQL)
 CREATE OR REPLACE TABLE olist_gold.dim_customers AS
+WITH customer_metrics AS (
+    SELECT
+        customer_id,
+        COUNT(DISTINCT order_id) AS total_orders,
+        SUM(price) AS lifetime_value,
+        MIN(order_purchase_timestamp) AS first_purchase,
+        MAX(order_purchase_timestamp) AS last_purchase,
+        DATEDIFF(
+            MAX(order_purchase_timestamp),
+            MIN(order_purchase_timestamp)
+        ) AS customer_lifespan_days,
+        AVG(delivery_days) AS avg_delivery_days
+    FROM olist_gold.fct_orders
+    GROUP BY customer_id
+)
 SELECT
     c.customer_id,
     c.customer_unique_id,
     c.customer_zip_code_prefix AS zip_code,
     c.customer_city AS city,
     c.customer_state AS state,
-    COALESCE(agg.total_orders, 0) AS total_orders,
-    COALESCE(agg.lifetime_value, 0) AS lifetime_value,
+    COALESCE(m.total_orders, 0) AS total_orders,
+    COALESCE(m.lifetime_value, 0) AS lifetime_value,
+    m.first_purchase,
+    m.last_purchase,
+    COALESCE(m.customer_lifespan_days, 0) AS customer_lifespan_days,
+    ROUND(m.avg_delivery_days, 1) AS avg_delivery_days,
     CASE
-        WHEN agg.total_orders > 1 THEN 'Returning'
-        WHEN agg.total_orders = 1 THEN 'One-time'
+        WHEN m.total_orders > 1 THEN 'Returning'
+        WHEN m.total_orders = 1 THEN 'One-time'
         ELSE 'No Orders'
     END AS customer_type
 FROM olist_silver.customers c
-LEFT JOIN (
-    SELECT customer_id,
-           COUNT(DISTINCT order_id) AS total_orders,
-           SUM(price) AS lifetime_value
-    FROM olist_gold.fct_orders
-    GROUP BY customer_id
-) agg ON c.customer_id = agg.customer_id;""",
+LEFT JOIN customer_metrics m ON c.customer_id = m.customer_id;""",
             language="sql",
         )
