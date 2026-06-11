@@ -92,6 +92,19 @@ CSV Files ─────────►│  ┌──────────�
 
 ---
 
+## 🔐 Data Governance
+
+The marts live under **Unity Catalog**, which adds governance on top of the lakehouse:
+
+- **Ownership & documentation** - every Gold table carries an owner plus table and column descriptions
+- **Access boundaries** - Bronze/Silver/Gold are separate schemas, so raw data and business-ready data can be granted independently
+- **Lineage** - Unity Catalog records table-level lineage from Bronze through Gold automatically
+- **Audit trail** - queries against the warehouse are visible in Databricks query history
+
+Relevant for any EU/GDPR context: "where does customer data live, who can read it, and what feeds this dashboard" can be answered directly from the catalog.
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Clone & Setup Environment
