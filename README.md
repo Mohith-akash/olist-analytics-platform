@@ -1,22 +1,12 @@
-<div align="center">
+# Olist E-commerce Analytics Platform
 
-# 🛒 Olist E-commerce Analytics Platform
-
-### Lakehouse analytics with Databricks, Delta Lake & Streamlit
-
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://olist-analytics-platform.streamlit.app/)
-[![Databricks](https://img.shields.io/badge/Databricks-Lakehouse-FF3621?logo=databricks&logoColor=white)](https://databricks.com)
-[![Delta Lake](https://img.shields.io/badge/Delta_Lake-Storage-00ADD8?logo=delta&logoColor=white)](https://delta.io)
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
 [![CI](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohith-akash/olist-analytics-platform/actions/workflows/ci.yml)
+
+Lakehouse analytics with Databricks, Delta Lake, and Streamlit.
 
 **[Live Dashboard](https://olist-analytics-platform.streamlit.app/)** · **[Dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)**
 
-</div>
-
----
-
-## 🎯 Overview
+## Overview
 
 A complete analytics platform analyzing **100,000+ orders** from Brazilian e-commerce marketplace Olist (2016-2018). Built to demonstrate:
 
@@ -28,30 +18,25 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 
 ---
 
-## 📊 Dashboard Preview
+## Dashboard preview
 
-### KPIs & Insights
+**KPIs & insights**
+
 ![Dashboard Hero](docs/images/screenshot_hero.png)
 
-### Charts & Analytics
+**Charts & analytics**
+
 ![Dashboard Charts](docs/images/screenshot_charts.png)
 
 ---
 
-## 🛠️ Tech Stack
+## Tech stack
 
-<table>
-<tr>
-<td align="center"><img src="https://img.shields.io/badge/-Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white" /><br/>Lakehouse Platform</td>
-<td align="center"><img src="https://img.shields.io/badge/-Delta_Lake-00ADD8?style=for-the-badge&logo=delta&logoColor=white" /><br/>Storage Format</td>
-<td align="center"><img src="https://img.shields.io/badge/-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" /><br/>Web Dashboard</td>
-<td align="center"><img src="https://img.shields.io/badge/-Python-3776AB?style=for-the-badge&logo=python&logoColor=white" /><br/>Backend</td>
-</tr>
-</table>
+Databricks (lakehouse platform) · Delta Lake (storage) · Streamlit (dashboard) · Python 3.11 · GitHub Actions (CI)
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
                     ┌─────────────────────────────────────────────────────┐
@@ -92,7 +77,7 @@ CSV Files ─────────►│  ┌──────────�
 
 ---
 
-## 🔐 Data Governance
+## Data governance
 
 The marts live under **Unity Catalog**, which adds governance on top of the lakehouse:
 
@@ -105,7 +90,7 @@ Relevant for any EU/GDPR context: "where does customer data live, who can read i
 
 ---
 
-## 🚀 Quick Start
+## Quick start
 
 ### 1. Clone & Setup Environment
 
@@ -138,47 +123,35 @@ streamlit run streamlit_app.py
 
 ---
 
-## 📁 Project Structure
+## Project structure
 
 ```
 olist_analytics_platform/
-├── 📊 streamlit_app.py              # Dashboard entry point
-├── 📋 requirements.txt              # Python dependencies
-│
-├── 📂 app/                          # Core modules
-│   ├── components.py                # Reusable UI helpers
-│   ├── database.py                  # Databricks SQL connection
-│   ├── styles.py                    # CSS styling
-│   └── utils.py                     # Formatting utilities
-│
-├── 📂 tabs/                         # Dashboard components
-│   ├── home.py                      # KPIs and overview
-│   ├── analytics.py                 # Analysis charts
-│   ├── query.py                     # Data explorer
-│   └── about.py                     # Project info
-│
-├── 📂 databricks/                   # SQL notebooks (reference)
+├── streamlit_app.py              # Dashboard entry point
+├── requirements.txt              # Python dependencies
+├── app/                          # Core modules
+│   ├── components.py             # Reusable UI helpers
+│   ├── database.py               # Databricks SQL connection
+│   ├── styles.py                 # CSS styling
+│   └── utils.py                  # Formatting utilities
+├── tabs/                         # Dashboard components
+│   ├── home.py                   # KPIs and overview
+│   ├── analytics.py              # Analysis charts
+│   ├── query.py                  # Data explorer
+│   └── about.py                  # Project info
+├── databricks/                   # SQL notebooks (reference)
 │   ├── 01_bronze_layer.sql
 │   ├── 02_silver_layer.sql
 │   └── 03_gold_layer.sql
-│
-└── 📂 docs/images/                  # Screenshots
+└── docs/images/                  # Screenshots
 ```
 
 ---
 
-## 📚 Dataset
+## Dataset
 
-> **Olist Brazilian E-commerce Dataset**
-> 100K+ orders · 9 tables · 2016-2018
-> [Kaggle](https://www.kaggle.com/olistbr/brazilian-ecommerce)
+Olist Brazilian E-commerce Dataset — 100K+ orders, 9 tables, 2016-2018. Available on [Kaggle](https://www.kaggle.com/olistbr/brazilian-ecommerce).
 
 ---
 
-<div align="center">
-
-### Built by [Mohith Akash](https://github.com/Mohith-Akash)
-
-⭐ Star this repo if you found it helpful!
-
-</div>
+Built by [Mohith Akash](https://github.com/Mohith-akash) · [LinkedIn](https://www.linkedin.com/in/mohith-akash/)
