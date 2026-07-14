@@ -3,3 +3,7 @@ streamlit==1.59.1
 pandas==2.3.3
 plotly==6.9.0
 databricks-sql-connector==4.3.0
+# transitive natives pinned too - unpinned pyarrow floating on rebuild
+# segfaulted the gdelt app, not risking a repeat here
+pyarrow==25.0.0
+numpy==2.5.1
