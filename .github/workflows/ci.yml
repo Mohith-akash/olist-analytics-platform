@@ -17,7 +17,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          # match Streamlit Cloud's runtime (3.13) so CI installs the
+          # same pinned deps as production - numpy 2.5.x needs >=3.12
+          python-version: '3.13'
           cache: 'pip'
 
       - name: Install dependencies
