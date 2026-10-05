@@ -12,9 +12,9 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 
 - **Lakehouse Architecture** - Databricks with Delta Lake storage
 - **Medallion Pattern** - Bronze → Silver → Gold data layers
-- **SQL Expertise** - Complex transformations, CTEs, JOINs
+- **SQL** - transformations with CTEs and joins
 - **Data Visualization** - Interactive Streamlit dashboard
-- **CI/CD** - GitHub Actions for linting and testing
+- **CI** - GitHub Actions runs Ruff linting and syntax checks
 
 ---
 
@@ -32,7 +32,7 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 
 ## Tech stack
 
-Databricks (lakehouse platform) · Delta Lake (storage) · Streamlit (dashboard) · Python 3.11 · GitHub Actions (CI)
+Databricks (lakehouse platform) · Delta Lake (storage) · Streamlit (dashboard) · Python 3.13 · GitHub Actions (CI)
 
 ---
 
