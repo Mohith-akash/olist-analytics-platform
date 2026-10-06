@@ -14,7 +14,7 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 - **Medallion Pattern** - Bronze → Silver → Gold data layers
 - **SQL** - transformations with CTEs and joins
 - **Data Visualization** - Interactive Streamlit dashboard, plus a Power BI report on the same Gold tables (`reports/`)
-- **CI** - GitHub Actions runs Ruff linting and syntax checks
+- **CI** - GitHub Actions runs Ruff linting, syntax checks and unit tests
 
 ---
 
@@ -151,6 +151,7 @@ olist_analytics_platform/
 │   ├── 02_silver_layer.sql
 │   └── 03_gold_layer.sql
 ├── reports/                      # Power BI report (.pbix)
+├── tests/                        # pytest unit tests
 └── docs/images/                  # Screenshots
 ```
 
