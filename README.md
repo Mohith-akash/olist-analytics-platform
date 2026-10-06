@@ -13,7 +13,7 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 - **Lakehouse Architecture** - Databricks with Delta Lake storage
 - **Medallion Pattern** - Bronze → Silver → Gold data layers
 - **SQL** - transformations with CTEs and joins
-- **Data Visualization** - Interactive Streamlit dashboard
+- **Data Visualization** - Interactive Streamlit dashboard, plus a Power BI report on the same Gold tables (`reports/`)
 - **CI** - GitHub Actions runs Ruff linting and syntax checks
 
 ---
@@ -32,7 +32,7 @@ A complete analytics platform analyzing **100,000+ orders** from Brazilian e-com
 
 ## Tech stack
 
-Databricks (lakehouse platform) · Delta Lake (storage) · Streamlit (dashboard) · Python 3.13 · GitHub Actions (CI)
+Databricks (lakehouse platform) · Delta Lake (storage) · Streamlit (dashboard) · Power BI (report) · Python 3.13 · GitHub Actions (CI)
 
 ---
 
@@ -81,12 +81,18 @@ CSV Files ─────────►│  ┌──────────�
 
 The marts live under **Unity Catalog**, which adds governance on top of the lakehouse:
 
-- **Ownership & documentation** - every Gold table carries an owner plus table and column descriptions
+- **Ownership** - every table has an owner in Unity Catalog, and the dashboard reads only from Gold
 - **Access boundaries** - Bronze/Silver/Gold are separate schemas, so raw data and business-ready data can be granted independently
 - **Lineage** - Unity Catalog records table-level lineage from Bronze through Gold automatically
 - **Audit trail** - queries against the warehouse are visible in Databricks query history
 
 Relevant for any EU/GDPR context: "where does customer data live, who can read it, and what feeds this dashboard" can be answered directly from the catalog.
+
+---
+
+## How it evolved
+
+The first version (December 2025) ran on DuckDB and MotherDuck, with dbt Core staging and mart models plus schema tests. In January 2026 it moved to Databricks and Delta Lake, with the transformations rewritten as the Bronze/Silver/Gold SQL in `databricks/`.
 
 ---
 
@@ -137,12 +143,14 @@ olist_analytics_platform/
 ├── tabs/                         # Dashboard components
 │   ├── home.py                   # KPIs and overview
 │   ├── analytics.py              # Analysis charts
+│   ├── engineering.py            # Pipeline and SQL walkthrough
 │   ├── query.py                  # Data explorer
 │   └── about.py                  # Project info
 ├── databricks/                   # SQL notebooks (reference)
 │   ├── 01_bronze_layer.sql
 │   ├── 02_silver_layer.sql
 │   └── 03_gold_layer.sql
+├── reports/                      # Power BI report (.pbix)
 └── docs/images/                  # Screenshots
 ```
 
