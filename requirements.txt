@@ -4,6 +4,11 @@ pandas==2.3.3
 plotly==6.9.0
 databricks-sql-connector==4.3.0
 # transitive natives pinned too - unpinned pyarrow floating on rebuild
-# segfaulted the gdelt app, not risking a repeat here
-pyarrow==25.0.0
+# segfaulted the gdelt app. 25.x is a known segfault (apache/arrow#50471) and
+# Community Cloud swaps it for 24.0.0 anyway, so pin what actually runs
+pyarrow==24.0.0
 numpy==2.5.1
+# starlette 1.8 sends the gzip response start early and streamlit 1.59's
+# override never forwards it: favicon.png and other images 500 with
+# "Expected ASGI message 'http.response.start'". 1.7.0 is the last that works
+starlette==1.7.0
