@@ -66,7 +66,8 @@ def load_snapshot():
 def load_data():
     """Gold tables from Databricks, or the saved snapshot if the warehouse is down.
 
-    Returns fct_orders, dim_customers, dim_products, dim_sellers, from_snapshot.
+    Returns fct_orders, dim_customers, dim_products, dim_sellers and a flag that
+    is True when the tables came from the snapshot.
     """
     live = _live_or_none()
     if live is not None:
