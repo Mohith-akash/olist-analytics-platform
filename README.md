@@ -127,6 +127,8 @@ DATABRICKS_TOKEN = "your-access-token"
 streamlit run streamlit_app.py
 ```
 
+Without Databricks credentials, or when the Free Edition warehouse won't start, the app reads `snapshot/`: a Parquet copy of the four Gold tables, and the page says so. The current copy was exported from the Power BI model. Refresh it from Databricks with `python scripts/export_snapshot.py` (same three values as environment variables).
+
 ---
 
 ## Project structure
@@ -137,7 +139,7 @@ olist_analytics_platform/
 ├── requirements.txt              # Python dependencies
 ├── app/                          # Core modules
 │   ├── components.py             # Reusable UI helpers
-│   ├── database.py               # Databricks SQL connection
+│   ├── database.py               # Databricks SQL connection, snapshot fallback
 │   ├── styles.py                 # CSS styling
 │   └── utils.py                  # Formatting utilities
 ├── tabs/                         # Dashboard components
@@ -151,6 +153,8 @@ olist_analytics_platform/
 │   ├── 02_silver_layer.sql
 │   └── 03_gold_layer.sql
 ├── reports/                      # Power BI report (.pbix)
+├── snapshot/                     # Parquet copy of the Gold tables (fallback)
+├── scripts/export_snapshot.py    # Refresh snapshot/ from Databricks
 ├── tests/                        # pytest unit tests
 └── docs/images/                  # Screenshots
 ```

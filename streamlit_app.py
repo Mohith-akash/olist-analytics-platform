@@ -22,15 +22,21 @@ st.set_page_config(
 # Inject custom CSS
 inject_css()
 
-# Load data from Databricks
+# Load data from Databricks (saved Gold snapshot if the warehouse is down)
 try:
-    fct_orders, dim_customers, dim_products, dim_sellers = load_data()
+    fct_orders, dim_customers, dim_products, dim_sellers, from_snapshot = load_data()
     fct_orders["order_purchase_timestamp"] = pd.to_datetime(
         fct_orders["order_purchase_timestamp"]
     )
 except Exception as e:
     st.error(f"Connection Error: {e}")
     st.stop()
+
+if from_snapshot:
+    st.caption(
+        "The Databricks SQL warehouse is unavailable right now, "
+        "so this page shows a saved copy of the same Gold tables."
+    )
 
 
 # Tab navigation
