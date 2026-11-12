@@ -163,7 +163,7 @@ olist_analytics_platform/
 
 ## Dataset
 
-Olist Brazilian E-commerce Dataset: 100K+ orders, 9 tables, 2016-2018. Available on [Kaggle](https://www.kaggle.com/olistbr/brazilian-ecommerce).
+Olist Brazilian E-commerce Dataset: 99,441 orders, 9 tables, 2016-2018. Available on [Kaggle](https://www.kaggle.com/olistbr/brazilian-ecommerce).
 
 ---
 
