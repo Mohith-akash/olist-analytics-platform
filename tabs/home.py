@@ -13,7 +13,7 @@ def render(fct_orders, dim_customers, dim_sellers):
     """Render the Home tab with KPIs and overview charts."""
     render_hero_header(
         "🛒 Olist E-commerce Analytics Platform",
-        "Brazilian marketplace data • 100K+ orders • 2016-2018 • Powered by Databricks + Delta Lake",
+        "Brazilian marketplace data • 98K+ orders • 2016-2018 • Powered by Databricks + Delta Lake",
     )
 
     # Calculate metrics
