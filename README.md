@@ -8,7 +8,7 @@ Lakehouse analytics with Databricks, Delta Lake, and Streamlit.
 
 ## Overview
 
-A complete analytics platform analyzing **100,000+ orders** from Brazilian e-commerce marketplace Olist (2016-2018). Built to demonstrate:
+A complete analytics platform analyzing **~99K orders** from Brazilian e-commerce marketplace Olist (2016-2018). Built to demonstrate:
 
 - **Lakehouse Architecture** - Databricks with Delta Lake storage
 - **Medallion Pattern** - Bronze → Silver → Gold data layers
