@@ -92,7 +92,7 @@ Relevant for any EU/GDPR context: "where does customer data live, who can read i
 
 ## How it evolved
 
-The first version (December 2025) ran on DuckDB and MotherDuck, with dbt Core staging and mart models plus schema tests. In January 2026 it moved to Databricks and Delta Lake, with the transformations rewritten as the Bronze/Silver/Gold SQL in `databricks/`.
+The first version (December 2025) ran on DuckDB and MotherDuck, with dbt Core staging and mart models plus schema tests. In January 2026 it moved to Databricks and Delta Lake, with the transformations rewritten as the Bronze/Silver/Gold SQL in `databricks/`. The dbt version is still on GitHub: [`olist_dbt/` at commit 5ec60e9](https://github.com/Mohith-akash/olist-analytics-platform/tree/5ec60e9a1d297297426f091d30b15727f5077842/olist_dbt).
 
 ---
 
